@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/zP_Homes_jar</output-path>
     <root id="archive" name="zP Homes.jar">
       <element id="module-output" name="zP Homes" />
+      <element id="library" level="project" name="libraries" />
     </root>
   </artifact>
 </component>

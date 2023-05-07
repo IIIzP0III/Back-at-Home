@@ -1,0 +1,21 @@
+## YAML Template.
+---
+
+author: zP0
+name: zPHomes
+version: 4
+load: POSTWORLD
+main: solarsystem.coffee.zPHomes
+database: true
+
+commands:
+  sethome:
+    description: /sethome homename | Set a new home
+  homes:
+    description: /homes pagenumber | List your homes
+  home:
+    description: /home homename | Teleports you to your home
+  delhome:
+    description: /delhome homename | Deletes a home
+  homeshelp:
+    description: /homeshelp | shows help
