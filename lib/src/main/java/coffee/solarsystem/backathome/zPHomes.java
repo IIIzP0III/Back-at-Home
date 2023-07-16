@@ -150,12 +150,13 @@ public class zPHomes extends JavaPlugin {
           //                  here?
           getLogger().info("Inserting user home " + playeruuid +
                            " with Name:" + home);
+
           if (stmt.execute(
                   "INSERT IGNORE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES ('" +
                   playeruuid + "', '" + home + "', '" +
                   player.getWorld().getName() + "', " + loc.getX() + ", " +
                   loc.getY() + ", " + loc.getZ() + ", " + loc.getYaw() + ", " +
-                  loc.getPitch() + ", '" + player.getServer().getName() + ")"))
+                  loc.getPitch() + ", '" + player.getServer().getName() + "')"))
             player.sendMessage("Home Set " + home);
 
         } catch (SQLException ex) {
@@ -163,8 +164,8 @@ public class zPHomes extends JavaPlugin {
         }
         return true;
       }
-      if (input.equals("homes")) { // List all Homes
 
+      if (input.equals("homes")) { // List all Homes
         try {
           int page = -1;
           if (args.length != 0) {
@@ -172,6 +173,7 @@ public class zPHomes extends JavaPlugin {
           } else {
             page = Integer.valueOf(args[0] + 1);
           }
+
           if (page == -1) {
             cs.sendMessage("Usage /homes pagenumber");
           }
