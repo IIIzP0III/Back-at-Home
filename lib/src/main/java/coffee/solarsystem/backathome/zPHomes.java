@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /** @author zP0 zP@solarsystem.coffee */
 public class zPHomes extends JavaPlugin {
   // homes listed per /homes page
-  public final int PAGE_LENGTH = 30;
+  public static final int PAGE_LENGTH = 30;
 
   public String host, port, database, username, password;
   // static MysqlDataSource data = new MysqlDataSource();
@@ -190,7 +190,7 @@ public class zPHomes extends JavaPlugin {
         }
       }
 
-      ResultSet rs = prepared.allHomesFor(uuid);
+      ResultSet rs = prepared.homesSegment(uuid, page);
 
       player.sendMessage(ChatColor.BOLD + "Homes (Page " + (page + 1) + ") : ");
 
@@ -267,7 +267,7 @@ public class zPHomes extends JavaPlugin {
 
   private class PreparedStatements {
     private PreparedStatement _homesWithName;
-    private PreparedStatement _allHomesFor;
+    private PreparedStatement _homesSegment;
     private PreparedStatement _deleteHome;
     private PreparedStatement _setHome;
 
@@ -276,8 +276,8 @@ public class zPHomes extends JavaPlugin {
         _homesWithName = conn.prepareStatement(
             "SELECT * FROM homes WHERE UUID = ? AND NAME = ?");
 
-        _allHomesFor =
-            conn.prepareStatement("SELECT * FROM homes WHERE UUID = ?");
+        _homesSegment = conn.prepareStatement(
+            "SELECT * FROM homes WHERE UUID = ? ORDER BY id DESC LIMIT ?,?");
 
         _deleteHome = conn.prepareStatement(
             "DELETE FROM homes WHERE UUID = ? AND NAME = ?");
@@ -313,9 +313,14 @@ public class zPHomes extends JavaPlugin {
       return _homesWithName.executeQuery();
     }
 
-    ResultSet allHomesFor(String uuid) throws SQLException {
-      _allHomesFor.setString(1, uuid);
-      return _allHomesFor.executeQuery();
+    ResultSet homesSegment(String uuid, int segment) throws SQLException {
+      _homesSegment.setString(1, uuid);
+
+      int start = segment * PAGE_LENGTH;
+      _homesSegment.setInt(2, start);
+      _homesSegment.setInt(3, start + PAGE_LENGTH);
+
+      return _homesSegment.executeQuery();
     }
 
     boolean homeExists(String uuid, String home) throws SQLException {
