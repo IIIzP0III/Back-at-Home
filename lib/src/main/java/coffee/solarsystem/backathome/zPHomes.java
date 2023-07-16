@@ -18,6 +18,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /** @author zP0 zP@solarsystem.coffee */
 public class zPHomes extends JavaPlugin {
+  // homes listed per /homes page
+  public final int PAGE_LENGTH = 30;
+
   public String host, port, database, username, password;
   // static MysqlDataSource data = new MysqlDataSource();
   static Statement stmt;
@@ -177,27 +180,25 @@ public class zPHomes extends JavaPlugin {
     String uuid = player.getUniqueId().toString();
 
     try {
-      int page = -1;
-      if (args.length == 0) {
-        page = 1;
-      } else {
-        page = Integer.valueOf(args[0] + 1);
-      }
+      int page = 0;
 
-      if (page == -1) {
-        cs.sendMessage("Usage: /homes pagenumber");
+      if (args.length > 0) {
+        try {
+          page = Integer.valueOf(args[0]) - 1;
+        } catch (NumberFormatException e) {
+          cs.sendMessage("Usage: /homes [page]");
+        }
       }
 
       ResultSet rs = prepared.allHomesFor(uuid);
 
-      int n = (page - 1) * 50;
-      player.sendMessage(ChatColor.BOLD + "Homes Page [" + page + "] : ");
-      while (rs.next() && n < page * 50) {
+      player.sendMessage(ChatColor.BOLD + "Homes (Page " + (page + 1) + ") : ");
+
+      for (int i = 0; rs.next() && i < PAGE_LENGTH; i++) {
         player
             .sendMessage(
-                ChatColor.DARK_AQUA + String.valueOf(n) +
+                ChatColor.DARK_AQUA + String.valueOf(i + 1) +
                 " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
-        n++;
       }
     } catch (SQLException ex) {
       Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
