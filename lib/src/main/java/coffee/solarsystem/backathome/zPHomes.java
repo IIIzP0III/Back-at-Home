@@ -112,8 +112,6 @@ public class zPHomes extends JavaPlugin {
                            String[] args) {
 
     Player player = (Player)interpreter;
-    Server server = getServer();
-    ConsoleCommandSender cs = server.getConsoleSender();
 
     try {
       conn = DriverManager.getConnection(
