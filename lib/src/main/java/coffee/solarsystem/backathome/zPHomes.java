@@ -69,6 +69,7 @@ public class zPHomes extends JavaPlugin {
 
     // version below 0.4.0
     if (semVerCmp(new int[] {0, 4, 0}, lastVersion)) {
+      getLogger().info("Adding yaw, pitch, and server columns");
       stmt.execute(
           "ALTER TABLE homes ADD COLUMN IF NOT EXISTS yaw FLOAT DEFAULT -1.0;");
 
@@ -77,14 +78,20 @@ public class zPHomes extends JavaPlugin {
 
       stmt.execute(
           "ALTER TABLE homes ADD COLUMN IF NOT EXISTS server VARCHAR(255) DEFAULT 'DEFAULT' ");
+      getLogger().info("Done!");
     }
 
-    if (semVerCmp(new int[] {0, 4, 0}, lastVersion)) {
+    if (semVerCmp(new int[] {0, 6, 3}, lastVersion)) {
+      getLogger().info("Making NAME column unique...");
       stmt.execute("ALTER TABLE homes ADD UNIQUE (Name)");
+      getLogger().info("Done!");
     }
+
+    getLogger().info("Ran all the catch-up procedures!");
 
     config.set("LastLoadedVersion", plVerStr);
     saveConfig();
+    getLogger().info("New config saved after catch-up procedures.");
   }
 
   @Override public void onEnable() { // Put that in config file
@@ -93,16 +100,6 @@ public class zPHomes extends JavaPlugin {
     cs.sendMessage("Establishing Database connection");
 
     File configdata = new File("plugins/zPHomes/config.yml");
-
-    try {
-      updateBackwardsCompat();
-    } catch (SQLException e) {
-      Logger.getLogger(zPHomes.class.getName())
-          .log(
-              Level.WARNING,
-              "Failed to run backwards-compatibility checks... Trying again next load.",
-              e);
-    }
 
     // Build config ifnot exists
     if (!configdata.exists()) {
@@ -140,6 +137,17 @@ public class zPHomes extends JavaPlugin {
         throw new RuntimeException(e);
       }
     }
+
+    // stuff to run when updating from older version
+    try {
+      updateBackwardsCompat();
+    } catch (SQLException e) {
+      Logger.getLogger(zPHomes.class.getName())
+          .log(
+              Level.WARNING,
+              "Failed to run backwards-compatibility checks... Trying again next load.",
+              e);
+    }
   }
   @Override
   public void onDisable() {
@@ -156,7 +164,7 @@ public class zPHomes extends JavaPlugin {
           "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
       stmt = (Statement)conn.createStatement();
       stmt.execute(
-          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(254) UNIQUE, world varchar(255), x double, y double, z double, yaw float, pitch float)");
+          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double, yaw float, pitch float)");
 
       // getLogger().info("Database connected");
     } catch (SQLException ex) {
