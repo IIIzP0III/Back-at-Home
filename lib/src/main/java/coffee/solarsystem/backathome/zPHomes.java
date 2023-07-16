@@ -216,9 +216,7 @@ public class zPHomes extends JavaPlugin {
     String home = args.length > 0 ? args[0] : "home";
 
     try {
-      // TODO VERY SUSSY CODE!!!!!!!
-      ResultSet rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" +
-                                       uuid + "' AND Name = '" + home + "'");
+      ResultSet rs = prepared.homesWithName(uuid, home);
       if (!rs.next()) {
         player.sendMessage("Home not found");
         return false;
