@@ -14,9 +14,9 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
 /** @author zP0 zP@solarsystem.coffee */
 public class zPHomes extends JavaPlugin {
-
   public String host, port, database, username, password;
   // static MysqlDataSource data = new MysqlDataSource();
   static Statement stmt;
