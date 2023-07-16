@@ -162,13 +162,12 @@ public class zPHomes extends JavaPlugin {
     try {
       getLogger().info("Inserting user home " + uuid + " with Name:" + home);
 
-      // TODO VERY SUSSY CODE!!!!!!!
-      stmt.execute(
-          "REPLACE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES ('" +
-          uuid + "', '" + home + "', '" + player.getWorld().getName() + "', " +
-          loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ", " +
-          loc.getYaw() + ", " + loc.getPitch() + ", '" +
-          player.getServer().getName() + "')");
+      prepared.setHome(uuid, home,
+                       new HomeLocation(player.getWorld().getName(), loc.getX(),
+                                        loc.getY(), loc.getZ(), loc.getYaw(),
+                                        loc.getPitch(),
+                                        player.getServer().getName()));
+
       player.sendMessage("Home Set " + home);
 
     } catch (SQLException ex) {
@@ -270,6 +269,7 @@ public class zPHomes extends JavaPlugin {
     private PreparedStatement _homesWithName;
     private PreparedStatement _allHomesFor;
     private PreparedStatement _deleteHome;
+    private PreparedStatement _setHome;
 
     private PreparedStatements(Connection conn) {
       try {
@@ -281,9 +281,30 @@ public class zPHomes extends JavaPlugin {
 
         _deleteHome = conn.prepareStatement(
             "DELETE FROM homes WHERE UUID = ? AND NAME = ?");
+
+        _setHome = conn.prepareStatement(
+            "REPLACE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
       } catch (SQLException e) {
         getLogger().log(Level.SEVERE, "Failed to init prepared", e);
       }
+    }
+
+    void setHome(String uuid, String home, HomeLocation hloc)
+        throws SQLException {
+      // for fuck's sake, man
+      _setHome.setString(1, uuid);
+      _setHome.setString(2, home);
+      _setHome.setString(3, hloc.worldname);
+      _setHome.setDouble(4, hloc.x);
+      _setHome.setDouble(5, hloc.y);
+      _setHome.setDouble(6, hloc.z);
+      _setHome.setFloat(7, hloc.yaw);
+      _setHome.setFloat(8, hloc.pitch);
+      _setHome.setString(9, hloc.servername);
+
+      // phew, it's over
+      _setHome.executeQuery();
     }
 
     ResultSet homesWithName(String uuid, String home) throws SQLException {
@@ -305,6 +326,23 @@ public class zPHomes extends JavaPlugin {
       _deleteHome.setString(1, uuid);
       _deleteHome.setString(2, home);
       _deleteHome.executeQuery();
+    }
+  }
+
+  private class HomeLocation {
+    double x, y, z;
+    float yaw, pitch;
+    public String worldname, servername;
+
+    public HomeLocation(String worldname, double x, double y, double z,
+                        float yaw, float pitch, String servername) {
+      this.worldname = worldname;
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.yaw = yaw;
+      this.pitch = pitch;
+      this.servername = servername; // is this even necessary?
     }
   }
 }
