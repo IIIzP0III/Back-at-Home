@@ -302,7 +302,7 @@ public class zPHomes extends JavaPlugin {
       _setHome.setString(9, hloc.servername);
 
       // phew, it's over
-      _setHome.executeQuery();
+      _setHome.execute();
     }
 
     ResultSet homesWithName(String uuid, String home) throws SQLException {
@@ -323,7 +323,7 @@ public class zPHomes extends JavaPlugin {
     void deleteHome(String uuid, String home) throws SQLException {
       _deleteHome.setString(1, uuid);
       _deleteHome.setString(2, home);
-      _deleteHome.executeQuery();
+      _deleteHome.execute();
     }
   }
 
