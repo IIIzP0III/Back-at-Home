@@ -81,10 +81,20 @@ public class zPHomes extends JavaPlugin {
 
         // version below 0.4.0
         if (version[0] < 1 && version[1] < 4) {
+          getLogger().info("Doing that. :P");
           stmt.execute(
-              "ALTER TABLE homes ADD FLOAT() yaw DEFAULT='-1.0', FLOAT() pitch DEFAULT='-1.0', varchar(255) server DEFAULT='DEFAULT'");
-          config.set("Version", "4");
-          saveConfig();
+              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS yaw FLOAT DEFAULT -1.0;");
+
+          stmt.execute(
+              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS pitch FLOAT DEFAULT - 1.0");
+
+          stmt.execute(
+              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS server VARCHAR(255) DEFAULT 'DEFAULT' ");
+
+          // config.set("Version", "4");
+          // saveConfig();
+        } else {
+          getLogger().info("Not... doing that. :P");
         }
 
       } catch (SQLException e) {
@@ -211,7 +221,7 @@ public class zPHomes extends JavaPlugin {
           loc.setY(rs.getDouble("y"));
           loc.setZ(rs.getDouble("z"));
           float yaw = rs.getFloat("yaw");
-          float pitch = rs.getFloat("float");
+          float pitch = rs.getFloat("pitch");
           if (yaw != -1.0) {
             loc.setYaw(yaw);
           }
