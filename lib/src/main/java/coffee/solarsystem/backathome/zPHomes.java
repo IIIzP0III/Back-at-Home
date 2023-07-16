@@ -255,13 +255,13 @@ public class zPHomes extends JavaPlugin {
       //                  here?
       getLogger().info("Inserting user home " + uuid + " with Name:" + home);
 
-      if (stmt.execute(
-              "INSERT IGNORE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES ('" +
-              uuid + "', '" + home + "', '" + player.getWorld().getName() +
-              "', " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() +
-              ", " + loc.getYaw() + ", " + loc.getPitch() + ", '" +
-              player.getServer().getName() + "')"))
-        player.sendMessage("Home Set " + home);
+      stmt.execute(
+          "INSERT IGNORE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES ('" +
+          uuid + "', '" + home + "', '" + player.getWorld().getName() + "', " +
+          loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ", " +
+          loc.getYaw() + ", " + loc.getPitch() + ", '" +
+          player.getServer().getName() + "')");
+      player.sendMessage("Home Set " + home);
 
     } catch (SQLException ex) {
       Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
