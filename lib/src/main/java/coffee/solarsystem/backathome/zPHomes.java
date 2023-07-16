@@ -335,7 +335,7 @@ public class zPHomes extends JavaPlugin {
             "DELETE FROM homes WHERE UUID = ? AND NAME = ?");
 
         _setHome = conn.prepareStatement(
-            "REPLACE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "INSERT INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
       } catch (SQLException e) {
         getLogger().log(Level.SEVERE, "Failed to init prepared", e);
@@ -345,6 +345,8 @@ public class zPHomes extends JavaPlugin {
     void setHome(String uuid, String home, HomeLocation hloc)
         throws SQLException {
       // for fuck's sake, man
+      deleteHome(uuid, home);
+
       _setHome.setString(1, uuid);
       _setHome.setString(2, home);
       _setHome.setString(3, hloc.worldname);
