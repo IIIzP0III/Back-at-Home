@@ -83,7 +83,6 @@ public class zPHomes extends JavaPlugin {
 
         // version below 0.4.0
         if (version[0] < 1 && version[1] < 4) {
-          getLogger().info("Doing that. :P");
           stmt.execute(
               "ALTER TABLE homes ADD COLUMN IF NOT EXISTS yaw FLOAT DEFAULT -1.0;");
 
@@ -95,10 +94,7 @@ public class zPHomes extends JavaPlugin {
 
           // config.set("Version", "4");
           // saveConfig();
-        } else {
-          getLogger().info("Not... doing that. :P");
         }
-
       } catch (SQLException e) {
         throw new RuntimeException(e);
       }
@@ -192,8 +188,9 @@ public class zPHomes extends JavaPlugin {
       }
 
       if (page == -1) {
-        cs.sendMessage("Usage /homes pagenumber");
+        cs.sendMessage("Usage: /homes pagenumber");
       }
+
       ResultSet rs = prepared.allHomesFor(uuid);
 
       int n = (page - 1) * 50;
@@ -260,7 +257,7 @@ public class zPHomes extends JavaPlugin {
           player.sendMessage("Home " + home + " not found");
         }
       } else {
-        player.sendMessage("Usage /delhome homename");
+        player.sendMessage("Usage: /delhome homename");
       }
 
     } catch (SQLException ex) {
@@ -274,7 +271,7 @@ public class zPHomes extends JavaPlugin {
     private PreparedStatement _allHomesFor;
     private PreparedStatement _deleteHome;
 
-    public PreparedStatements(Connection conn) {
+    private PreparedStatements(Connection conn) {
       try {
         _homesWithName = conn.prepareStatement(
             "SELECT * FROM homes WHERE UUID = ? AND NAME = ?");
