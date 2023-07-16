@@ -256,11 +256,9 @@ public class zPHomes extends JavaPlugin {
       if (args.length > 0) {
 
         String home = args[0];
-        ResultSet exists =
-            // TODO VERY SUSSY CODE!!!!!!!
-            stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid +
-                              "' AND NAME = '" + home + "'");
-        if (exists.next()) {
+
+        // okay, seriously? TWO db calls?
+        if (prepared.homeExists(uuid, home)) {
           // TODO VERY SUSSY CODE!!!!!!!
           stmt.execute("DELETE FROM homes WHERE UUID = '" + uuid +
                        "' AND Name = '" + home + "'");
@@ -280,8 +278,25 @@ public class zPHomes extends JavaPlugin {
   }
 
   private class PreparedStatements {
+    private PreparedStatement _homesWithName;
+
     public PreparedStatements(Connection conn) {
-      //
+      try {
+        _homesWithName = conn.prepareStatement(
+            "SELECT * FROM homes WHERE UUID = ? AND NAME = ?");
+      } catch (SQLException e) {
+        getLogger().log(Level.SEVERE, "Failed to init prepared", e);
+      }
+    }
+
+    ResultSet homesWithName(String uuid, String home) throws SQLException {
+      _homesWithName.setString(1, uuid);
+      _homesWithName.setString(2, home);
+      return _homesWithName.executeQuery();
+    }
+
+    boolean homeExists(String uuid, String home) throws SQLException {
+      return homesWithName(uuid, home).next();
     }
   }
 }
