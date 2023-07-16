@@ -81,12 +81,6 @@ public class zPHomes extends JavaPlugin {
       getLogger().info("Done!");
     }
 
-    if (semVerCmp(new int[] {0, 6, 3}, lastVersion)) {
-      getLogger().info("Making NAME column unique...");
-      stmt.execute("ALTER TABLE homes ADD UNIQUE (Name)");
-      getLogger().info("Done!");
-    }
-
     getLogger().info("Ran all the catch-up procedures!");
 
     config.set("LastLoadedVersion", plVerStr);
