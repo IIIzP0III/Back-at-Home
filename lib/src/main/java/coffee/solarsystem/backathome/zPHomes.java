@@ -1,4 +1,4 @@
-package solarsystem.coffee;
+package coffee.solarsystem.backathome;
 
 import java.io.File;
 import java.sql.*;
@@ -25,7 +25,6 @@ public class zPHomes extends JavaPlugin {
   static Statement querry;
   ResultSet rs;
   FileConfiguration config = this.getConfig();
-  private static File file;
   String DatabaseUser, Password, Address, Database, Port = "";
 
   @Override public void onEnable() { // Put that in config file
