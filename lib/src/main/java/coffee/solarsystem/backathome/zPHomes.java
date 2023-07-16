@@ -2,6 +2,7 @@ package coffee.solarsystem.backathome;
 
 import java.io.File;
 import java.sql.*;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
@@ -43,12 +44,65 @@ public class zPHomes extends JavaPlugin {
     return parsed;
   }
 
+  /**
+   * true if first argument is a newer semver version than second argument
+   */
+  boolean semVerCmp(int[] first, int[] second) {
+    final boolean firstEq = (first[0] == second[0]);
+    final boolean secondEq = (first[1] == second[1]);
+
+    return (first[0] > second[0]) || (firstEq && (first[1] > second[1])) ||
+        (firstEq && secondEq && (first[2] > second[2]));
+  }
+
+  void updateBackwardsCompat() throws SQLException {
+    String plVerStr = pdf.getVersion();
+    int[] version = parseSemVer(plVerStr);
+
+    String lastVerStr = Objects.requireNonNullElse(
+        config.getString("LastLoadedVersion"), plVerStr);
+    int[] lastVersion = parseSemVer(lastVerStr);
+
+    if (version.equals(lastVersion)) {
+      return;
+    }
+
+    // version below 0.4.0
+    if (semVerCmp(new int[] {0, 4, 0}, lastVersion)) {
+      stmt.execute(
+          "ALTER TABLE homes ADD COLUMN IF NOT EXISTS yaw FLOAT DEFAULT -1.0;");
+
+      stmt.execute(
+          "ALTER TABLE homes ADD COLUMN IF NOT EXISTS pitch FLOAT DEFAULT - 1.0");
+
+      stmt.execute(
+          "ALTER TABLE homes ADD COLUMN IF NOT EXISTS server VARCHAR(255) DEFAULT 'DEFAULT' ");
+    }
+
+    if (semVerCmp(new int[] {0, 4, 0}, lastVersion)) {
+      stmt.execute("ALTER TABLE homes ADD UNIQUE (Name)");
+    }
+
+    config.set("LastLoadedVersion", plVerStr);
+    saveConfig();
+  }
+
   @Override public void onEnable() { // Put that in config file
     Server server = getServer();
     ConsoleCommandSender cs = server.getConsoleSender();
     cs.sendMessage("Establishing Database connection");
 
     File configdata = new File("plugins/zPHomes/config.yml");
+
+    try {
+      updateBackwardsCompat();
+    } catch (SQLException e) {
+      Logger.getLogger(zPHomes.class.getName())
+          .log(
+              Level.WARNING,
+              "Failed to run backwards-compatibility checks... Trying again next load.",
+              e);
+    }
 
     // Build config ifnot exists
     if (!configdata.exists()) {
@@ -66,14 +120,12 @@ public class zPHomes extends JavaPlugin {
 
       this.getPluginLoader().disablePlugin(
           Bukkit.getPluginManager().getPlugin("coffee.solarsystem.backathome"));
-
     } else {
       DatabaseUser = config.getString("DatabaseUser");
       Password = config.getString("Password");
       Address = config.getString("Address");
       Database = config.getString("Database");
       Port = config.getString("Port");
-      int[] version = parseSemVer(pdf.getVersion());
 
       try {
         conn = DriverManager.getConnection(
@@ -84,20 +136,6 @@ public class zPHomes extends JavaPlugin {
         stmt.execute(
             "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
 
-        // version below 0.4.0
-        if (version[0] < 1 && version[1] < 4) {
-          stmt.execute(
-              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS yaw FLOAT DEFAULT -1.0;");
-
-          stmt.execute(
-              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS pitch FLOAT DEFAULT - 1.0");
-
-          stmt.execute(
-              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS server VARCHAR(255) DEFAULT 'DEFAULT' ");
-
-          // config.set("Version", "4");
-          // saveConfig();
-        }
       } catch (SQLException e) {
         throw new RuntimeException(e);
       }
@@ -118,7 +156,7 @@ public class zPHomes extends JavaPlugin {
           "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
       stmt = (Statement)conn.createStatement();
       stmt.execute(
-          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double, yaw float, pitch float)");
+          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(254) UNIQUE, world varchar(255), x double, y double, z double, yaw float, pitch float)");
 
       // getLogger().info("Database connected");
     } catch (SQLException ex) {
