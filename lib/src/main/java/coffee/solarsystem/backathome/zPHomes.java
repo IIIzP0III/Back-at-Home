@@ -21,14 +21,13 @@ public class zPHomes extends JavaPlugin {
   // static MysqlDataSource data = new MysqlDataSource();
   static Statement stmt;
   static Connection conn;
+  static Statement query;
   ResultSet Lookup;
-  static Statement querry;
   ResultSet rs;
   FileConfiguration config = this.getConfig();
   String DatabaseUser, Password, Address, Database, Port = "";
 
   @Override public void onEnable() { // Put that in config file
-
     Server server = getServer();
     ConsoleCommandSender cs = server.getConsoleSender();
     cs.sendMessage("Establishing Database connection");
