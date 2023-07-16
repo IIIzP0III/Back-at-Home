@@ -2,6 +2,7 @@ package coffee.solarsystem.backathome;
 
 import java.io.File;
 import java.sql.*;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
@@ -43,6 +44,50 @@ public class zPHomes extends JavaPlugin {
     return parsed;
   }
 
+  /**
+   * true if first argument is a newer semver version than second argument
+   */
+  boolean semVerCmp(int[] first, int[] second) {
+    final boolean firstEq = (first[0] == second[0]);
+    final boolean secondEq = (first[1] == second[1]);
+
+    return (first[0] > second[0]) || (firstEq && (first[1] > second[1])) ||
+        (firstEq && secondEq && (first[2] > second[2]));
+  }
+
+  void updateBackwardsCompat() throws SQLException {
+    String plVerStr = pdf.getVersion();
+    int[] version = parseSemVer(plVerStr);
+
+    String lastVerStr = Objects.requireNonNullElse(
+        config.getString("LastLoadedVersion"), plVerStr);
+    int[] lastVersion = parseSemVer(lastVerStr);
+
+    if (version.equals(lastVersion)) {
+      return;
+    }
+
+    // version below 0.4.0
+    if (semVerCmp(new int[] {0, 4, 0}, lastVersion)) {
+      getLogger().info("Adding yaw, pitch, and server columns");
+      stmt.execute(
+          "ALTER TABLE homes ADD COLUMN IF NOT EXISTS yaw FLOAT DEFAULT -1.0;");
+
+      stmt.execute(
+          "ALTER TABLE homes ADD COLUMN IF NOT EXISTS pitch FLOAT DEFAULT - 1.0");
+
+      stmt.execute(
+          "ALTER TABLE homes ADD COLUMN IF NOT EXISTS server VARCHAR(255) DEFAULT 'DEFAULT' ");
+      getLogger().info("Done!");
+    }
+
+    getLogger().info("Ran all the catch-up procedures!");
+
+    config.set("LastLoadedVersion", plVerStr);
+    saveConfig();
+    getLogger().info("New config saved after catch-up procedures.");
+  }
+
   @Override public void onEnable() { // Put that in config file
     Server server = getServer();
     ConsoleCommandSender cs = server.getConsoleSender();
@@ -66,14 +111,12 @@ public class zPHomes extends JavaPlugin {
 
       this.getPluginLoader().disablePlugin(
           Bukkit.getPluginManager().getPlugin("coffee.solarsystem.backathome"));
-
     } else {
       DatabaseUser = config.getString("DatabaseUser");
       Password = config.getString("Password");
       Address = config.getString("Address");
       Database = config.getString("Database");
       Port = config.getString("Port");
-      int[] version = parseSemVer(pdf.getVersion());
 
       try {
         conn = DriverManager.getConnection(
@@ -84,23 +127,20 @@ public class zPHomes extends JavaPlugin {
         stmt.execute(
             "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
 
-        // version below 0.4.0
-        if (version[0] < 1 && version[1] < 4) {
-          stmt.execute(
-              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS yaw FLOAT DEFAULT -1.0;");
-
-          stmt.execute(
-              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS pitch FLOAT DEFAULT - 1.0");
-
-          stmt.execute(
-              "ALTER TABLE homes ADD COLUMN IF NOT EXISTS server VARCHAR(255) DEFAULT 'DEFAULT' ");
-
-          // config.set("Version", "4");
-          // saveConfig();
-        }
       } catch (SQLException e) {
         throw new RuntimeException(e);
       }
+    }
+
+    // stuff to run when updating from older version
+    try {
+      updateBackwardsCompat();
+    } catch (SQLException e) {
+      Logger.getLogger(zPHomes.class.getName())
+          .log(
+              Level.WARNING,
+              "Failed to run backwards-compatibility checks... Trying again next load.",
+              e);
     }
   }
   @Override
@@ -289,7 +329,7 @@ public class zPHomes extends JavaPlugin {
             "DELETE FROM homes WHERE UUID = ? AND NAME = ?");
 
         _setHome = conn.prepareStatement(
-            "REPLACE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "INSERT INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
       } catch (SQLException e) {
         getLogger().log(Level.SEVERE, "Failed to init prepared", e);
@@ -299,6 +339,8 @@ public class zPHomes extends JavaPlugin {
     void setHome(String uuid, String home, HomeLocation hloc)
         throws SQLException {
       // for fuck's sake, man
+      deleteHome(uuid, home);
+
       _setHome.setString(1, uuid);
       _setHome.setString(2, home);
       _setHome.setString(3, hloc.worldname);
