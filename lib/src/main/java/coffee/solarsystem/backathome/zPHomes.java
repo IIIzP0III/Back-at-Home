@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /** @author zP0 zP@solarsystem.coffee */
 public class zPHomes extends JavaPlugin {
   // homes listed per /homes page
-  public static final int PAGE_LENGTH = 30;
+  public static final int PAGE_LENGTH = 16;
 
   public String host, port, database, username, password;
   // static MysqlDataSource data = new MysqlDataSource();
