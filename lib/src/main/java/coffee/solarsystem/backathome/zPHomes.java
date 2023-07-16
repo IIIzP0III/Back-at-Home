@@ -194,7 +194,8 @@ public class zPHomes extends JavaPlugin {
 
       player.sendMessage(ChatColor.BOLD + "Homes (Page " + (page + 1) + ") : ");
 
-      for (int i = 0; rs.next() && i < PAGE_LENGTH; i++) {
+      int start = page * PAGE_LENGTH;
+      for (int i = start; rs.next() && i < start + PAGE_LENGTH; i++) {
         player
             .sendMessage(
                 ChatColor.DARK_AQUA + String.valueOf(i + 1) +
