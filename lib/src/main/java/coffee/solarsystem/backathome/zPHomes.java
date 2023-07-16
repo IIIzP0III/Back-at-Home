@@ -25,7 +25,6 @@ public class zPHomes extends JavaPlugin {
   static Statement query;
   PluginDescriptionFile pdf = this.getDescription();
   ResultSet Lookup;
-  ResultSet rs;
   FileConfiguration config = this.getConfig();
   String DatabaseUser, Password, Address, Database, Port = "";
 
@@ -200,7 +199,8 @@ public class zPHomes extends JavaPlugin {
       if (page == -1) {
         cs.sendMessage("Usage /homes pagenumber");
       }
-      rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid + "'");
+      ResultSet rs =
+          stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid + "'");
       int n = (page - 1) * 50;
       player.sendMessage(ChatColor.BOLD + "Homes Page [" + page + "] : ");
       while (rs.next() && n < page * 50) {
@@ -220,8 +220,8 @@ public class zPHomes extends JavaPlugin {
     String home = args.length > 0 ? args[0] : "home";
 
     try {
-      rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid +
-                             "' AND Name = '" + home + "'");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" +
+                                       uuid + "' AND Name = '" + home + "'");
       if (!rs.next()) {
         player.sendMessage("Home not found");
         return false;
@@ -236,12 +236,14 @@ public class zPHomes extends JavaPlugin {
       loc.setZ(rs.getDouble("z"));
       float yaw = rs.getFloat("yaw");
       float pitch = rs.getFloat("pitch");
+
       if (yaw != -1.0) {
         loc.setYaw(yaw);
       }
       if (pitch != -1.0) {
         loc.setPitch(pitch);
       }
+
       player.teleport(loc);
       player.sendMessage("Teleported to: " + home);
     } catch (SQLException ex) {
