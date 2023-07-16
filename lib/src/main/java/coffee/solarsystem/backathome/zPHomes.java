@@ -162,11 +162,9 @@ public class zPHomes extends JavaPlugin {
     try {
       getLogger().info("Inserting user home " + uuid + " with Name:" + home);
 
-      prepared.setHome(uuid, home,
-                       new HomeLocation(player.getWorld().getName(), loc.getX(),
-                                        loc.getY(), loc.getZ(), loc.getYaw(),
-                                        loc.getPitch(),
-                                        player.getServer().getName()));
+      HomeLocation hloc = new HomeLocation(loc, player.getWorld().getName(),
+                                           player.getServer().getName());
+      prepared.setHome(uuid, home, hloc);
 
       player.sendMessage("Home Set " + home);
 
@@ -334,14 +332,13 @@ public class zPHomes extends JavaPlugin {
     float yaw, pitch;
     public String worldname, servername;
 
-    public HomeLocation(String worldname, double x, double y, double z,
-                        float yaw, float pitch, String servername) {
+    public HomeLocation(Location loc, String worldname, String servername) {
+      this.x = loc.getX();
+      this.y = loc.getY();
+      this.z = loc.getZ();
+      this.yaw = loc.getYaw();
+      this.pitch = loc.getPitch();
       this.worldname = worldname;
-      this.x = x;
-      this.y = y;
-      this.z = z;
-      this.yaw = yaw;
-      this.pitch = pitch;
       this.servername = servername; // is this even necessary?
     }
   }
