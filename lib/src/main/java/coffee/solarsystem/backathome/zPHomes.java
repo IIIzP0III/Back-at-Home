@@ -134,8 +134,7 @@ public class zPHomes extends JavaPlugin {
         return true;
 
       case "homes":
-        cmdListHomes(player, args);
-        return true;
+        return cmdListHomes(player, args);
 
       case "homeshelp":
         player.sendMessage("zPHomes by zP0");
@@ -176,17 +175,23 @@ public class zPHomes extends JavaPlugin {
     }
   }
 
-  void cmdListHomes(Player player, String[] args) {
+  boolean cmdListHomes(Player player, String[] args) {
     String uuid = player.getUniqueId().toString();
 
     try {
       int page = 0;
 
       if (args.length > 0) {
+        boolean fail = false;
         try {
           page = Integer.valueOf(args[0]) - 1;
         } catch (NumberFormatException e) {
-          player.sendMessage("Usage: /homes [page]");
+          fail = true;
+        } finally {
+          if (fail || page < 0) {
+            player.sendMessage("Usage: /homes [page]");
+            return false;
+          }
         }
       }
 
@@ -203,7 +208,10 @@ public class zPHomes extends JavaPlugin {
       }
     } catch (SQLException ex) {
       Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+      return false;
     }
+
+    return true;
   }
 
   boolean gotoHome(Player player, String[] args) {
