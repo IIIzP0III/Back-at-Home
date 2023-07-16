@@ -23,6 +23,7 @@ public class zPHomes extends JavaPlugin {
   static Statement stmt;
   static Connection conn;
   static Statement query;
+  PreparedStatements prepared;
   PluginDescriptionFile pdf = this.getDescription();
   ResultSet Lookup;
   FileConfiguration config = this.getConfig();
@@ -74,6 +75,8 @@ public class zPHomes extends JavaPlugin {
       try {
         conn = DriverManager.getConnection(
             "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
+        prepared = new PreparedStatements(conn);
+
         stmt = (Statement)conn.createStatement();
         stmt.execute(
             "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
@@ -160,22 +163,12 @@ public class zPHomes extends JavaPlugin {
     String home = args.length > 0 ? args[0] : "home";
     String uuid = player.getUniqueId().toString();
 
-    // TODO VERY SUSSY CODE!!!!!!!
     try {
-      ResultSet lookup =
-          stmt.executeQuery("SELECT Name FROM homes WHERE UUID = '" + uuid +
-                            "' AND Name = '" + home + "'");
-
-      if (lookup.next()) {
-        stmt.execute("DELETE FROM homes WHERE UUID = '" + uuid +
-                     "' AND Name = '" + home + "'");
-      }
-
       getLogger().info("Inserting user home " + uuid + " with Name:" + home);
 
       // TODO VERY SUSSY CODE!!!!!!!
       stmt.execute(
-          "INSERT IGNORE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES ('" +
+          "REPLACE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES ('" +
           uuid + "', '" + home + "', '" + player.getWorld().getName() + "', " +
           loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + ", " +
           loc.getYaw() + ", " + loc.getPitch() + ", '" +
@@ -268,7 +261,6 @@ public class zPHomes extends JavaPlugin {
             stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid +
                               "' AND NAME = '" + home + "'");
         if (exists.next()) {
-
           // TODO VERY SUSSY CODE!!!!!!!
           stmt.execute("DELETE FROM homes WHERE UUID = '" + uuid +
                        "' AND Name = '" + home + "'");
@@ -285,5 +277,11 @@ public class zPHomes extends JavaPlugin {
       Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
     }
     return true;
+  }
+
+  private class PreparedStatements {
+    public PreparedStatements(Connection conn) {
+      //
+    }
   }
 }
