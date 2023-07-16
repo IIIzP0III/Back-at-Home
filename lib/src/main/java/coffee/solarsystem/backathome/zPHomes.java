@@ -70,7 +70,7 @@ public class zPHomes extends JavaPlugin {
       Address = config.getString("Address");
       Database = config.getString("Database");
       Port = config.getString("Port");
-      int version = parseSemVer(pdf.getVersion())[1];
+      int[] version = parseSemVer(pdf.getVersion());
 
       try {
         conn = DriverManager.getConnection(
@@ -79,7 +79,8 @@ public class zPHomes extends JavaPlugin {
         stmt.execute(
             "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
 
-        if (version < 4) {
+        // version below 0.4.0
+        if (version[0] < 1 && version[1] < 4) {
           stmt.execute(
               "ALTER TABLE homes ADD FLOAT() yaw DEFAULT='-1.0', FLOAT() pitch DEFAULT='-1.0', varchar(255) server DEFAULT='DEFAULT'");
           config.set("Version", "4");
