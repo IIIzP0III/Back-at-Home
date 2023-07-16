@@ -194,9 +194,8 @@ public class zPHomes extends JavaPlugin {
       if (page == -1) {
         cs.sendMessage("Usage /homes pagenumber");
       }
-      ResultSet rs =
-          // TODO VERY SUSSY CODE!!!!!!!
-          stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid + "'");
+      ResultSet rs = prepared.allHomesFor(uuid);
+
       int n = (page - 1) * 50;
       player.sendMessage(ChatColor.BOLD + "Homes Page [" + page + "] : ");
       while (rs.next() && n < page * 50) {
@@ -272,12 +271,16 @@ public class zPHomes extends JavaPlugin {
 
   private class PreparedStatements {
     private PreparedStatement _homesWithName;
+    private PreparedStatement _allHomesFor;
     private PreparedStatement _deleteHome;
 
     public PreparedStatements(Connection conn) {
       try {
         _homesWithName = conn.prepareStatement(
             "SELECT * FROM homes WHERE UUID = ? AND NAME = ?");
+
+        _allHomesFor =
+            conn.prepareStatement("SELECT * FROM homes WHERE UUID = ?");
 
         _deleteHome = conn.prepareStatement(
             "DELETE FROM homes WHERE UUID = ? AND NAME = ?");
@@ -290,6 +293,11 @@ public class zPHomes extends JavaPlugin {
       _homesWithName.setString(1, uuid);
       _homesWithName.setString(2, home);
       return _homesWithName.executeQuery();
+    }
+
+    ResultSet allHomesFor(String uuid) throws SQLException {
+      _allHomesFor.setString(1, uuid);
+      return _allHomesFor.executeQuery();
     }
 
     boolean homeExists(String uuid, String home) throws SQLException {
