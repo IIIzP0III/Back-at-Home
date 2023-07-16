@@ -49,7 +49,7 @@ public class zPHomes extends JavaPlugin {
           "Disabling zPHomes Plugin, setup your MySQL/MariaDB Database connection in ./plugins/zPHomes/config.yml");
 
       this.getPluginLoader().disablePlugin(
-          Bukkit.getPluginManager().getPlugin("solarsystem.coffee.zPHomes"));
+          Bukkit.getPluginManager().getPlugin("coffee.solarsystem.backathome"));
 
     } else {
       DatabaseUser = config.getString("DatabaseUser");
