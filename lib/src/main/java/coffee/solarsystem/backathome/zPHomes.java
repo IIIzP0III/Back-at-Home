@@ -160,18 +160,20 @@ public class zPHomes extends JavaPlugin {
     String home = args.length > 0 ? args[0] : "home";
     String uuid = player.getUniqueId().toString();
 
+    // TODO VERY SUSSY CODE!!!!!!!
     try {
       ResultSet lookup =
           stmt.executeQuery("SELECT Name FROM homes WHERE UUID = '" + uuid +
                             "' AND Name = '" + home + "'");
+
       if (lookup.next()) {
         stmt.execute("DELETE FROM homes WHERE UUID = '" + uuid +
                      "' AND Name = '" + home + "'");
       }
-      //                  stmt.execute("SELECT * FROM homes"); Not needed
-      //                  here?
+
       getLogger().info("Inserting user home " + uuid + " with Name:" + home);
 
+      // TODO VERY SUSSY CODE!!!!!!!
       stmt.execute(
           "INSERT IGNORE INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES ('" +
           uuid + "', '" + home + "', '" + player.getWorld().getName() + "', " +
@@ -200,6 +202,7 @@ public class zPHomes extends JavaPlugin {
         cs.sendMessage("Usage /homes pagenumber");
       }
       ResultSet rs =
+          // TODO VERY SUSSY CODE!!!!!!!
           stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid + "'");
       int n = (page - 1) * 50;
       player.sendMessage(ChatColor.BOLD + "Homes Page [" + page + "] : ");
@@ -220,6 +223,7 @@ public class zPHomes extends JavaPlugin {
     String home = args.length > 0 ? args[0] : "home";
 
     try {
+      // TODO VERY SUSSY CODE!!!!!!!
       ResultSet rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" +
                                        uuid + "' AND Name = '" + home + "'");
       if (!rs.next()) {
@@ -260,10 +264,12 @@ public class zPHomes extends JavaPlugin {
 
         String home = args[0];
         ResultSet exists =
+            // TODO VERY SUSSY CODE!!!!!!!
             stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid +
                               "' AND NAME = '" + home + "'");
         if (exists.next()) {
 
+          // TODO VERY SUSSY CODE!!!!!!!
           stmt.execute("DELETE FROM homes WHERE UUID = '" + uuid +
                        "' AND Name = '" + home + "'");
           player.sendMessage("Home " + home + " Deleted");
