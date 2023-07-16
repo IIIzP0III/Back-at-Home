@@ -111,7 +111,6 @@ public class zPHomes extends JavaPlugin {
                            String[] args) {
 
     Player player = (Player)interpreter;
-    String playeruuid = player.getUniqueId().toString();
     Server server = getServer();
     ConsoleCommandSender cs = server.getConsoleSender();
 
@@ -131,107 +130,26 @@ public class zPHomes extends JavaPlugin {
       switch (input) {
       case "sethome":
         cmdSetHome(player, args);
-        break;
-      }
-
-      if (input.equals("homes")) { // List all Homes
-        try {
-          int page = -1;
-          if (args.length == 0) {
-            page = 1;
-          } else {
-            page = Integer.valueOf(args[0] + 1);
-          }
-
-          if (page == -1) {
-            cs.sendMessage("Usage /homes pagenumber");
-          }
-          rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" +
-                                 playeruuid + "'");
-          int n = (page - 1) * 50;
-          player.sendMessage(ChatColor.BOLD + "Homes Page [" + page + "] : ");
-          while (rs.next() && n < page * 50) {
-            player.sendMessage(
-                ChatColor.DARK_AQUA + String.valueOf(n) +
-                " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
-            n++;
-          }
-        } catch (SQLException ex) {
-          Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         return true;
-      }
-      if (input.equals("homeshelp")) {
+
+      case "homes":
+        cmdListHomes(player, args, cs);
+        return true;
+
+      case "homeshelp":
         player.sendMessage("zPHomes by zP0");
         player.sendMessage("Use '/home homename' To teleport to a home");
         player.sendMessage("Use '/homes pagenumber' to see all your homes");
         player.sendMessage("Use '/sethome homename' To set a new home");
         player.sendMessage("Use '/delhome homename' To delete a home");
         return false;
-      }
-      if (input.equals("home")) { // Teleport to home
-        String home = "home";
-        try {
-          if (args.length == 0) {
-          } else {
-            home = args[0];
-          }
-          rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" +
-                                 playeruuid + "' AND Name = '" + home + "'");
-          if (!rs.next()) {
-            player.sendMessage("Home not found");
-            return false;
-          }
 
-          player.sendMessage("| Going to: " + home + " | ");
+      case "home":
+        // returns bool from inside fn
+        return gotoHome(player, args);
 
-          Location loc = player.getLocation();
-          loc.setWorld(Bukkit.getWorld(rs.getString("world")));
-          loc.setX(rs.getDouble("x"));
-          loc.setY(rs.getDouble("y"));
-          loc.setZ(rs.getDouble("z"));
-          float yaw = rs.getFloat("yaw");
-          float pitch = rs.getFloat("pitch");
-          if (yaw != -1.0) {
-            loc.setYaw(yaw);
-          }
-          if (pitch != -1.0) {
-            loc.setPitch(pitch);
-          }
-          player.teleport(loc);
-          player.sendMessage("Teleported to: " + home);
-        } catch (SQLException ex) {
-          Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return true;
-      }
-      if (input.equals("delhome")) {
-
-        try {
-          if (args.length > 0) {
-
-            String home = args[0];
-            ResultSet exists =
-                stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" +
-                                  playeruuid + "' AND NAME = '" + home + "'");
-            if (exists.next()) {
-
-              stmt.execute("DELETE FROM homes WHERE UUID = '" + playeruuid +
-                           "' AND Name = '" + home + "'");
-              player.sendMessage("Home " + home + " Deleted");
-
-            } else {
-              player.sendMessage("Home " + home + " not found");
-            }
-          } else {
-            player.sendMessage("Usage /delhome homename");
-          }
-
-        } catch (SQLException ex) {
-          Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return true;
+      case "delhome":
+        return deleteHome(player, args);
       }
     }
 
@@ -266,5 +184,102 @@ public class zPHomes extends JavaPlugin {
     } catch (SQLException ex) {
       Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
     }
+  }
+
+  void cmdListHomes(Player player, String[] args, ConsoleCommandSender cs) {
+    String uuid = player.getUniqueId().toString();
+
+    try {
+      int page = -1;
+      if (args.length == 0) {
+        page = 1;
+      } else {
+        page = Integer.valueOf(args[0] + 1);
+      }
+
+      if (page == -1) {
+        cs.sendMessage("Usage /homes pagenumber");
+      }
+      rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid + "'");
+      int n = (page - 1) * 50;
+      player.sendMessage(ChatColor.BOLD + "Homes Page [" + page + "] : ");
+      while (rs.next() && n < page * 50) {
+        player
+            .sendMessage(
+                ChatColor.DARK_AQUA + String.valueOf(n) +
+                " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
+        n++;
+      }
+    } catch (SQLException ex) {
+      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
+
+  boolean gotoHome(Player player, String[] args) {
+    String uuid = player.getUniqueId().toString();
+    String home = "home";
+
+    try {
+      if (args.length == 0) {
+      } else {
+        home = args[0];
+      }
+      rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid +
+                             "' AND Name = '" + home + "'");
+      if (!rs.next()) {
+        player.sendMessage("Home not found");
+        return false;
+      }
+
+      player.sendMessage("| Going to: " + home + " | ");
+
+      Location loc = player.getLocation();
+      loc.setWorld(Bukkit.getWorld(rs.getString("world")));
+      loc.setX(rs.getDouble("x"));
+      loc.setY(rs.getDouble("y"));
+      loc.setZ(rs.getDouble("z"));
+      float yaw = rs.getFloat("yaw");
+      float pitch = rs.getFloat("pitch");
+      if (yaw != -1.0) {
+        loc.setYaw(yaw);
+      }
+      if (pitch != -1.0) {
+        loc.setPitch(pitch);
+      }
+      player.teleport(loc);
+      player.sendMessage("Teleported to: " + home);
+    } catch (SQLException ex) {
+      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return true;
+  }
+
+  boolean deleteHome(Player player, String[] args) {
+    String uuid = player.getUniqueId().toString();
+
+    try {
+      if (args.length > 0) {
+
+        String home = args[0];
+        ResultSet exists =
+            stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid +
+                              "' AND NAME = '" + home + "'");
+        if (exists.next()) {
+
+          stmt.execute("DELETE FROM homes WHERE UUID = '" + uuid +
+                       "' AND Name = '" + home + "'");
+          player.sendMessage("Home " + home + " Deleted");
+
+        } else {
+          player.sendMessage("Home " + home + " not found");
+        }
+      } else {
+        player.sendMessage("Usage /delhome homename");
+      }
+
+    } catch (SQLException ex) {
+      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return true;
   }
 }
