@@ -1,45 +1,18 @@
 package III_zP0_III;
 
-import java.sql.ResultSet;
-import java.sql.Statement;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.ResultSetMetaData;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-*/
-        /*
-         * To change this license header, choose License Headers in Project Properties.
-         * To change this template file, choose Tools | Templates
-         * and open the template in the editor.*/
 
-        import org.bukkit.plugin.java.JavaPlugin;
-        import org.bukkit.command.Command;
-        import org.bukkit.command.CommandSender;
-        import org.bukkit.configuration.file.FileConfiguration;
-        import org.bukkit.entity.Player;
-
-        import org.bukkit.Bukkit;
-        import org.bukkit.ChatColor;
-        import org.bukkit.Location;
-
-        import java.io.File;
-        import java.sql.*;
-        import java.util.logging.Level;
-        import java.util.logging.Logger;
+import java.io.File;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Back_at_home extends JavaPlugin{
 
@@ -59,12 +32,6 @@ public class Back_at_home extends JavaPlugin{
 
         getLogger().info("Hello World");
         getLogger().info("Establishing Database connection");
-            /*data.setUser("Zorg");
-            data.setPassword("19Nina61");
-            data.setServerName("85.10.200.9");
-            data.setPort(3306);
-            data.setDatabaseName("zorghome");*/
-
 
         File configdata = new File("plugins/solarsystem.coffee.ZorgHomes/config.yml");
 
@@ -152,7 +119,7 @@ public class Back_at_home extends JavaPlugin{
                     }
                     player.sendMessage("Home Set " + home);
                 } catch (SQLException ex) {
-                    Logger.getLogger(ZorgHomes.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Back_at_home.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return true;
             }
@@ -171,7 +138,7 @@ public class Back_at_home extends JavaPlugin{
 
 
                 } catch (SQLException ex) {
-                    Logger.getLogger(ZorgHomes.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Back_at_home.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 return true;
@@ -208,7 +175,7 @@ public class Back_at_home extends JavaPlugin{
                     player.teleport(loc);
                     player.sendMessage("Teleport done");
                 } catch (SQLException ex) {
-                    Logger.getLogger(ZorgHomes.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Back_at_home.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return true;
             }
@@ -229,7 +196,7 @@ public class Back_at_home extends JavaPlugin{
 
 
                 } catch (SQLException ex) {
-                    Logger.getLogger(ZorgHomes.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Back_at_home.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return true;
             }

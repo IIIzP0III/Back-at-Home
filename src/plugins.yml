@@ -1,0 +1,18 @@
+## YAML Template.
+---
+
+name: Back_at_home
+version: 1.04
+load: STARTUP
+author: zP
+main: III_zP0_III.Back_at_home
+softdepend: [Vault, Essentials]
+api-version: 1.18
+
+commands:
+  home:
+    description: /home homename
+  sethome:
+    description: /sethome homename
+  homes:
+    description: /homes list all your homes
