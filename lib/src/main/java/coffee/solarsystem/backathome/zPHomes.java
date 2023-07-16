@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /** @author zP0 zP@solarsystem.coffee */
@@ -22,10 +23,22 @@ public class zPHomes extends JavaPlugin {
   static Statement stmt;
   static Connection conn;
   static Statement query;
+  PluginDescriptionFile pdf = this.getDescription();
   ResultSet Lookup;
   ResultSet rs;
   FileConfiguration config = this.getConfig();
   String DatabaseUser, Password, Address, Database, Port = "";
+
+  private int[] parseSemVer(String semVerStr) {
+    String[] sep = semVerStr.split("\\.");
+    int[] parsed = new int[sep.length];
+
+    for (int i = 0; i < sep.length; i++) {
+      parsed[i] = Integer.parseInt(sep[i]);
+    }
+
+    return parsed;
+  }
 
   @Override public void onEnable() { // Put that in config file
     Server server = getServer();
@@ -57,8 +70,7 @@ public class zPHomes extends JavaPlugin {
       Address = config.getString("Address");
       Database = config.getString("Database");
       Port = config.getString("Port");
-      int Version = 0;
-      Version = Integer.valueOf(config.getString("version"));
+      int version = parseSemVer(pdf.getVersion())[1];
 
       try {
         conn = DriverManager.getConnection(
@@ -67,7 +79,7 @@ public class zPHomes extends JavaPlugin {
         stmt.execute(
             "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
 
-        if (Version < 4) {
+        if (version < 4) {
           stmt.execute(
               "ALTER TABLE homes ADD FLOAT() yaw DEFAULT='-1.0', FLOAT() pitch DEFAULT='-1.0', varchar(255) server DEFAULT='DEFAULT'");
           config.set("Version", "4");
