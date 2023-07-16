@@ -158,7 +158,7 @@ public class zPHomes extends JavaPlugin {
 
   void cmdSetHome(Player player, String[] args) {
     Location loc = player.getLocation();
-    String home = args.length >= 0 ? args[0] : "home";
+    String home = args.length > 0 ? args[0] : "home";
     String uuid = player.getUniqueId().toString();
 
     try {
@@ -217,13 +217,9 @@ public class zPHomes extends JavaPlugin {
 
   boolean gotoHome(Player player, String[] args) {
     String uuid = player.getUniqueId().toString();
-    String home = "home";
+    String home = args.length > 0 ? args[0] : "home";
 
     try {
-      if (args.length == 0) {
-      } else {
-        home = args[0];
-      }
       rs = stmt.executeQuery("SELECT * FROM homes WHERE UUID = '" + uuid +
                              "' AND Name = '" + home + "'");
       if (!rs.next()) {
