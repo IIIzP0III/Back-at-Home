@@ -204,7 +204,7 @@ public class zPHomes extends JavaPlugin {
 
       HomeLocation hloc = new HomeLocation(loc, player.getWorld().getName(),
                                            player.getServer().getName());
-      prepared.setHome(uuid, home, hloc);
+      prepared.setHomeOverwrite(uuid, home, hloc);
 
       player.sendMessage("Home Set " + home);
 
@@ -336,11 +336,24 @@ public class zPHomes extends JavaPlugin {
       }
     }
 
-    void setHome(String uuid, String home, HomeLocation hloc)
+    boolean setHomeSafe(String uuid, String home, HomeLocation hloc)
+        throws SQLException {
+      if (homeExists(uuid, home))
+        return false;
+
+      setHome(uuid, home, hloc);
+      return true;
+    }
+
+    void setHomeOverwrite(String uuid, String home, HomeLocation hloc)
         throws SQLException {
       // for fuck's sake, man
       deleteHome(uuid, home);
+      setHome(uuid, home, hloc);
+    }
 
+    void setHome(String uuid, String home, HomeLocation hloc)
+        throws SQLException {
       _setHome.setString(1, uuid);
       _setHome.setString(2, home);
       _setHome.setString(3, hloc.worldname);
