@@ -199,18 +199,11 @@ public class zPHomes extends JavaPlugin {
     String home = args.length > 0 ? args[0] : "home";
     String uuid = player.getUniqueId().toString();
 
-    try {
-      getLogger().info("Inserting user home " + uuid + " with Name:" + home);
+    HomeLocation hloc = new HomeLocation(loc, player.getWorld().getName(),
+                                         player.getServer().getName());
+    prepared.setHomeOverwrite(uuid, home, hloc);
 
-      HomeLocation hloc = new HomeLocation(loc, player.getWorld().getName(),
-                                           player.getServer().getName());
-      prepared.setHomeOverwrite(uuid, home, hloc);
-
-      player.sendMessage("Home Set " + home);
-
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
-    }
+    player.sendMessage("Home Set " + home);
   }
 
   boolean cmdListHomes(Player player, String[] args) {
@@ -338,34 +331,37 @@ public class zPHomes extends JavaPlugin {
 
     boolean setHomeSafe(String uuid, String home, HomeLocation hloc)
         throws SQLException {
-      if (homeExists(uuid, home))
-        return false;
+      boolean exists = homeExists(uuid, home);
+      if (exists)
+        setHome(uuid, home, hloc);
 
-      setHome(uuid, home, hloc);
-      return true;
+      return exists;
     }
 
-    void setHomeOverwrite(String uuid, String home, HomeLocation hloc)
-        throws SQLException {
+    void setHomeOverwrite(String uuid, String home, HomeLocation hloc) {
       // for fuck's sake, man
       deleteHome(uuid, home);
       setHome(uuid, home, hloc);
     }
 
-    void setHome(String uuid, String home, HomeLocation hloc)
-        throws SQLException {
-      _setHome.setString(1, uuid);
-      _setHome.setString(2, home);
-      _setHome.setString(3, hloc.worldname);
-      _setHome.setDouble(4, hloc.x);
-      _setHome.setDouble(5, hloc.y);
-      _setHome.setDouble(6, hloc.z);
-      _setHome.setFloat(7, hloc.yaw);
-      _setHome.setFloat(8, hloc.pitch);
-      _setHome.setString(9, hloc.servername);
+    void setHome(String uuid, String home, HomeLocation hloc) {
+      getLogger().info("Inserting user home " + uuid + " with Name:" + home);
 
       // phew, it's over
-      _setHome.execute();
+      try {
+        _setHome.setString(1, uuid);
+        _setHome.setString(2, home);
+        _setHome.setString(3, hloc.worldname);
+        _setHome.setDouble(4, hloc.x);
+        _setHome.setDouble(5, hloc.y);
+        _setHome.setDouble(6, hloc.z);
+        _setHome.setFloat(7, hloc.yaw);
+        _setHome.setFloat(8, hloc.pitch);
+        _setHome.setString(9, hloc.servername);
+        _setHome.execute();
+      } catch (SQLException ex) {
+        Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
 
     ResultSet homesWithName(String uuid, String home) throws SQLException {
@@ -388,10 +384,14 @@ public class zPHomes extends JavaPlugin {
       return homesWithName(uuid, home).next();
     }
 
-    void deleteHome(String uuid, String home) throws SQLException {
-      _deleteHome.setString(1, uuid);
-      _deleteHome.setString(2, home);
-      _deleteHome.execute();
+    void deleteHome(String uuid, String home) {
+      try {
+        _deleteHome.setString(1, uuid);
+        _deleteHome.setString(2, home);
+        _deleteHome.execute();
+      } catch (SQLException e) {
+        Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
+      }
     }
   }
 
