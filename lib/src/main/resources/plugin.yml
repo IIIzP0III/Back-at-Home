@@ -9,6 +9,8 @@ main: coffee.solarsystem.backathome.zPHomes
 database: true
 
 commands:
+  newhome:
+    description: /newhome homename | Create a new home, but don't overwrite if one already exists.
   sethome:
     description: /sethome homename | Set a new home
   homes:
