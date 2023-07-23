@@ -39,6 +39,20 @@ public class zPHomes extends JavaPlugin {
   FileConfiguration config = this.getConfig();
   String DatabaseUser, Password, Address, Database, Port = "";
 
+  private void newConnection() {
+    try {
+      conn = DriverManager.getConnection(
+          "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
+      prepared = new PreparedStatements(conn, getLogger());
+
+      stmt = (Statement)conn.createStatement();
+      stmt.execute(
+          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   private int[] parseSemVer(String semVerStr) {
     String[] sep = semVerStr.split("\\.");
     int[] parsed = new int[sep.length];
@@ -125,18 +139,7 @@ public class zPHomes extends JavaPlugin {
       Database = config.getString("Database");
       Port = config.getString("Port");
 
-      try {
-        conn = DriverManager.getConnection(
-            "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
-        prepared = new PreparedStatements(conn, getLogger());
-
-        stmt = (Statement)conn.createStatement();
-        stmt.execute(
-            "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
-
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
-      }
+      newConnection();
     }
 
     // stuff to run when updating from older version
@@ -154,23 +157,13 @@ public class zPHomes extends JavaPlugin {
   public void onDisable() {
     getLogger().info("Plugin Disabled");
   }
+
   @Override
   public boolean onCommand(CommandSender interpreter, Command cmd, String input,
                            String[] args) {
 
     Player player = (Player)interpreter;
-
-    try {
-      conn = DriverManager.getConnection(
-          "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
-      stmt = (Statement)conn.createStatement();
-      stmt.execute(
-          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double, yaw float, pitch float)");
-
-      // getLogger().info("Database connected");
-    } catch (SQLException ex) {
-      System.out.println(ex);
-    }
+    newConnection();
 
     if (interpreter instanceof Player) {
       switch (input) {
