@@ -24,6 +24,9 @@ public class zPHomes extends JavaPlugin {
   // homes listed per /homes page
   public static final int PAGE_LENGTH = 16;
 
+  // At least this percent of the name should match
+  public static final double HOME_SEARCH_STRICTNESS = 0.30;
+
   public String host, port, database, username, password;
   // static MysqlDataSource data = new MysqlDataSource();
   static Statement stmt;
@@ -297,7 +300,7 @@ public class zPHomes extends JavaPlugin {
     double distance = ld.apply(query, name);
     double ratio = distance / query.length();
 
-    return ratio <= 0.5;
+    return ratio <= (1.0 - HOME_SEARCH_STRICTNESS);
   }
 
   boolean cmdListHomes(Player player, String[] args) {
