@@ -242,7 +242,12 @@ public class zPHomes extends JavaPlugin {
     prepared.setHome(uuid, homename, hloc);
   }
 
-  boolean searchHomes(Player player, String query) {
+  private static enum SearchMode {
+    LEVENSHTEIN,
+    EITHER_CONTAINS,
+  }
+
+  boolean searchHomes(Player player, String query, SearchMode mode) {
     String uuid = player.getUniqueId().toString();
     ResultSet homes;
 
@@ -255,19 +260,23 @@ public class zPHomes extends JavaPlugin {
       for (int i = 0; homes.next(); i++) {
         String homeName = homes.getString("Name");
 
-        // TODO refactor this, filter the array BEFORE reaching this loop
-        // instead of doing a check at loop-time...
-        //
-        // yes this is pretty crappy code but I want to get this commit
-        // out of the way so I can fix the mysql stuff already
+        boolean matches = false;
 
-        // skip non-matching
-        if (!levenshteinScore(query, homeName))
+        switch (mode) {
+        case LEVENSHTEIN:
+          matches = levenshteinScore(query, homeName);
+          break;
+        case EITHER_CONTAINS:
+          matches = query.contains(homeName) || homeName.contains(query);
+          break;
+        }
+
+        // skip if doesn't match
+        if (!matches)
           continue;
 
         player.sendMessage(ChatColor.DARK_AQUA + String.valueOf(i + 1) + " | " +
-                           homes.getString("Name") + " | " +
-                           homes.getString("world"));
+                           homeName + " | " + homes.getString("world"));
       }
     } catch (SQLException e) {
       skillIssue(e);
@@ -304,10 +313,16 @@ public class zPHomes extends JavaPlugin {
       if (args.length > 0) {
         boolean fail = false;
 
-        if (args[0].toLowerCase().equals("search")) {
+        String firstArg = args[0].toLowerCase();
+        if (firstArg.contains("search")) {
           String[] queryW = Arrays.copyOfRange(args, 1, args.length);
           String query = String.join(" ", queryW);
-          return searchHomes(player, query);
+
+          SearchMode mode = firstArg.equals("searchl")
+                                ? SearchMode.LEVENSHTEIN
+                                : SearchMode.EITHER_CONTAINS;
+
+          return searchHomes(player, query, mode);
         }
 
         // not searching, so it must be a page number
