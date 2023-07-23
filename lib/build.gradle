@@ -6,8 +6,9 @@
  */
 
 plugins {
-    // Apply the java-library plugin for API and implementation separation.
-    id 'java-library'
+  // Apply the java-library plugin for API and implementation separation.
+  id 'java-library'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -20,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
-    implementation 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    shadow 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
+    shadow 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
     implementation 'org.apache.commons:commons-text:1.9'
 
     // Use JUnit test framework.
