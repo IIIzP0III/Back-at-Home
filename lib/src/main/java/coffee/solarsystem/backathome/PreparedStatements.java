@@ -41,11 +41,11 @@ public class PreparedStatements {
       _setHome.setString(1, uuid);
       _setHome.setString(2, home);
       _setHome.setString(3, hloc.worldname);
-      _setHome.setDouble(4, hloc.x);
-      _setHome.setDouble(5, hloc.y);
-      _setHome.setDouble(6, hloc.z);
-      _setHome.setFloat(7, hloc.yaw);
-      _setHome.setFloat(8, hloc.pitch);
+      _setHome.setDouble(4, hloc.loc.getX());
+      _setHome.setDouble(5, hloc.loc.getY());
+      _setHome.setDouble(6, hloc.loc.getZ());
+      _setHome.setFloat(7, hloc.loc.getYaw());
+      _setHome.setFloat(8, hloc.loc.getPitch());
       _setHome.setString(9, hloc.servername);
 
       // phew, it's over
