@@ -54,8 +54,8 @@ public class PreparedStatements {
 
       // phew, it's over
       _setHome.execute();
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (SQLException e) {
+      zPHomes.skillIssue(e);
     }
   }
 
@@ -90,7 +90,7 @@ public class PreparedStatements {
       _deleteHome.setString(2, home);
       _deleteHome.execute();
     } catch (SQLException e) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
+      zPHomes.skillIssue(e);
     }
   }
 }

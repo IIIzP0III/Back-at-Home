@@ -210,7 +210,7 @@ public class zPHomes extends JavaPlugin {
       exists = prepared.homeExists(uuid, home);
     } catch (SQLException e) {
       player.sendMessage("Error occurred while checking if home exists...");
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
+      skillIssue(e);
 
       return false;
     }
@@ -270,8 +270,7 @@ public class zPHomes extends JavaPlugin {
                            homes.getString("world"));
       }
     } catch (SQLException e) {
-      // TODO error-logging method instead of copy pasting this everywhere
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
+      skillIssue(e);
       return false;
     }
 
@@ -335,8 +334,8 @@ public class zPHomes extends JavaPlugin {
                 ChatColor.DARK_AQUA + String.valueOf(i + 1) +
                 " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
       }
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (SQLException e) {
+      skillIssue(e);
       return false;
     }
 
@@ -373,8 +372,8 @@ public class zPHomes extends JavaPlugin {
 
       player.teleport(loc);
       player.sendMessage("Teleported to: " + home);
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (SQLException e) {
+      skillIssue(e);
     }
     return true;
   }
@@ -396,9 +395,16 @@ public class zPHomes extends JavaPlugin {
         player.sendMessage("Usage: /delhome homename");
       }
 
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (SQLException e) {
+      skillIssue(e);
     }
     return true;
+  }
+
+  /**
+   * Generic severe error logger
+   */
+  static void skillIssue(Exception e) {
+    Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
   }
 }
