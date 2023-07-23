@@ -179,13 +179,15 @@ public class zPHomes extends JavaPlugin {
 
       case "homeshelp":
         player.sendMessage("zPHomes by zP0");
-        player.sendMessage("Use '/home homename' To teleport to a home");
-        player.sendMessage("Use '/homes pagenumber' to see all your homes");
+        player.sendMessage("Use '/home <name>' to teleport to a home");
+        player.sendMessage("Use '/homes <page>' to see all your homes");
         player.sendMessage(
-            "Use '/newhome homename' To only create a new home.");
+            "Use '/homes search <name>' to search for homes containing exact names");
         player.sendMessage(
-            "Use '/sethome homename' To create or update a home.");
-        player.sendMessage("Use '/delhome homename' To delete a home");
+            "Use '/homes searchl <name>' to search for homes with similar names");
+        player.sendMessage("Use '/newhome <name>' to only create a new home");
+        player.sendMessage("Use '/sethome <name>' to create or update a home");
+        player.sendMessage("Use '/delhome <name>' to delete a home");
         return false;
 
       case "home":
