@@ -122,7 +122,7 @@ public class zPHomes extends JavaPlugin {
       try {
         conn = DriverManager.getConnection(
             "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
-        prepared = new PreparedStatements(conn);
+        prepared = new PreparedStatements(conn, getLogger());
 
         stmt = (Statement)conn.createStatement();
         stmt.execute(
@@ -339,100 +339,5 @@ public class zPHomes extends JavaPlugin {
       Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
     }
     return true;
-  }
-
-  private class PreparedStatements {
-    private PreparedStatement _homesWithName;
-    private PreparedStatement _homesSegment;
-    private PreparedStatement _deleteHome;
-    private PreparedStatement _setHome;
-
-    private PreparedStatements(Connection conn) {
-      try {
-        _homesWithName = conn.prepareStatement(
-            "SELECT * FROM homes WHERE UUID = ? AND NAME = ?");
-
-        _homesSegment = conn.prepareStatement(
-            "SELECT * FROM homes WHERE UUID = ? ORDER BY id DESC LIMIT ?,?");
-
-        _deleteHome = conn.prepareStatement(
-            "DELETE FROM homes WHERE UUID = ? AND NAME = ?");
-
-        _setHome = conn.prepareStatement(
-            "INSERT INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-      } catch (SQLException e) {
-        getLogger().log(Level.SEVERE, "Failed to init prepared", e);
-      }
-    }
-
-    void setHome(String uuid, String home, HomeLocation hloc) {
-      deleteHome(uuid, home);
-
-      getLogger().info("Inserting user home " + uuid + " with Name:" + home);
-
-      try {
-        _setHome.setString(1, uuid);
-        _setHome.setString(2, home);
-        _setHome.setString(3, hloc.worldname);
-        _setHome.setDouble(4, hloc.x);
-        _setHome.setDouble(5, hloc.y);
-        _setHome.setDouble(6, hloc.z);
-        _setHome.setFloat(7, hloc.yaw);
-        _setHome.setFloat(8, hloc.pitch);
-        _setHome.setString(9, hloc.servername);
-
-        // phew, it's over
-        _setHome.execute();
-      } catch (SQLException ex) {
-        Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
-
-    ResultSet homesWithName(String uuid, String home) throws SQLException {
-      _homesWithName.setString(1, uuid);
-      _homesWithName.setString(2, home);
-      return _homesWithName.executeQuery();
-    }
-
-    ResultSet homesSegment(String uuid, int segment) throws SQLException {
-      _homesSegment.setString(1, uuid);
-
-      int start = segment * PAGE_LENGTH;
-      _homesSegment.setInt(2, start);
-      _homesSegment.setInt(3, start + PAGE_LENGTH);
-
-      return _homesSegment.executeQuery();
-    }
-
-    boolean homeExists(String uuid, String home) throws SQLException {
-      return homesWithName(uuid, home).next();
-    }
-
-    void deleteHome(String uuid, String home) {
-      try {
-        _deleteHome.setString(1, uuid);
-        _deleteHome.setString(2, home);
-        _deleteHome.execute();
-      } catch (SQLException e) {
-        Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
-      }
-    }
-  }
-
-  private class HomeLocation {
-    double x, y, z;
-    float yaw, pitch;
-    public String worldname, servername;
-
-    public HomeLocation(Location loc, String worldname, String servername) {
-      this.x = loc.getX();
-      this.y = loc.getY();
-      this.z = loc.getZ();
-      this.yaw = loc.getYaw();
-      this.pitch = loc.getPitch();
-      this.worldname = worldname;
-      this.servername = servername; // is this even necessary?
-    }
   }
 }
