@@ -6,8 +6,9 @@
  */
 
 plugins {
-    // Apply the java-library plugin for API and implementation separation.
-    id 'java-library'
+  // Apply the java-library plugin for API and implementation separation.
+  id 'java-library'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -20,17 +21,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
-    implementation 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    shadow 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
+    shadow 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    implementation 'org.apache.commons:commons-text:1.9'
 
     // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13.2'
-
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
+    // testImplementation 'junit:junit:4.13.2'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:31.1-jre'
+    // implementation 'com.google.guava:guava:31.1-jre'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

@@ -2,9 +2,11 @@ package coffee.solarsystem.backathome;
 
 import java.io.File;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -22,16 +24,34 @@ public class zPHomes extends JavaPlugin {
   // homes listed per /homes page
   public static final int PAGE_LENGTH = 16;
 
+  // At least this percent of the name should match
+  public static final double HOME_SEARCH_STRICTNESS = 0.30;
+
   public String host, port, database, username, password;
   // static MysqlDataSource data = new MysqlDataSource();
   static Statement stmt;
   static Connection conn;
   static Statement query;
   PreparedStatements prepared;
+  LevenshteinDistance ld;
   PluginDescriptionFile pdf = this.getDescription();
   ResultSet Lookup;
   FileConfiguration config = this.getConfig();
   String DatabaseUser, Password, Address, Database, Port = "";
+
+  private void newConnection() {
+    try {
+      conn = DriverManager.getConnection(
+          "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
+      prepared = new PreparedStatements(conn, getLogger());
+
+      stmt = (Statement)conn.createStatement();
+      stmt.execute(
+          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   private int[] parseSemVer(String semVerStr) {
     String[] sep = semVerStr.split("\\.");
@@ -89,6 +109,7 @@ public class zPHomes extends JavaPlugin {
   }
 
   @Override public void onEnable() { // Put that in config file
+    ld = new LevenshteinDistance();
     Server server = getServer();
     ConsoleCommandSender cs = server.getConsoleSender();
     cs.sendMessage("Establishing Database connection");
@@ -118,18 +139,7 @@ public class zPHomes extends JavaPlugin {
       Database = config.getString("Database");
       Port = config.getString("Port");
 
-      try {
-        conn = DriverManager.getConnection(
-            "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
-        prepared = new PreparedStatements(conn);
-
-        stmt = (Statement)conn.createStatement();
-        stmt.execute(
-            "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
-
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
-      }
+      newConnection();
     }
 
     // stuff to run when updating from older version
@@ -147,23 +157,13 @@ public class zPHomes extends JavaPlugin {
   public void onDisable() {
     getLogger().info("Plugin Disabled");
   }
+
   @Override
   public boolean onCommand(CommandSender interpreter, Command cmd, String input,
                            String[] args) {
 
     Player player = (Player)interpreter;
-
-    try {
-      conn = DriverManager.getConnection(
-          "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
-      stmt = (Statement)conn.createStatement();
-      stmt.execute(
-          "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double, yaw float, pitch float)");
-
-      // getLogger().info("Database connected");
-    } catch (SQLException ex) {
-      System.out.println(ex);
-    }
+    newConnection();
 
     if (interpreter instanceof Player) {
       switch (input) {
@@ -179,13 +179,15 @@ public class zPHomes extends JavaPlugin {
 
       case "homeshelp":
         player.sendMessage("zPHomes by zP0");
-        player.sendMessage("Use '/home homename' To teleport to a home");
-        player.sendMessage("Use '/homes pagenumber' to see all your homes");
+        player.sendMessage("Use '/home <name>' to teleport to a home");
+        player.sendMessage("Use '/homes <page>' to see all your homes");
         player.sendMessage(
-            "Use '/newhome homename' To only create a new home.");
+            "Use '/homes search <name>' to search for homes containing exact names");
         player.sendMessage(
-            "Use '/sethome homename' To create or update a home.");
-        player.sendMessage("Use '/delhome homename' To delete a home");
+            "Use '/homes searchl <name>' to search for homes with similar names");
+        player.sendMessage("Use '/newhome <name>' to only create a new home");
+        player.sendMessage("Use '/sethome <name>' to create or update a home");
+        player.sendMessage("Use '/delhome <name>' to delete a home");
         return false;
 
       case "home":
@@ -210,7 +212,7 @@ public class zPHomes extends JavaPlugin {
       exists = prepared.homeExists(uuid, home);
     } catch (SQLException e) {
       player.sendMessage("Error occurred while checking if home exists...");
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
+      skillIssue(e);
 
       return false;
     }
@@ -242,6 +244,68 @@ public class zPHomes extends JavaPlugin {
     prepared.setHome(uuid, homename, hloc);
   }
 
+  private static enum SearchMode {
+    LEVENSHTEIN,
+    EITHER_CONTAINS,
+  }
+
+  boolean searchHomes(Player player, String query, SearchMode mode) {
+    String uuid = player.getUniqueId().toString();
+    ResultSet homes;
+
+    try {
+      homes = prepared.getAllHomes(uuid);
+
+      player.sendMessage(ChatColor.BOLD + "Searching for homes... `" + query +
+                         "`");
+
+      for (int i = 0; homes.next(); i++) {
+        String homeName = homes.getString("Name");
+
+        boolean matches = false;
+
+        switch (mode) {
+        case LEVENSHTEIN:
+          matches = levenshteinScore(query, homeName);
+          break;
+        case EITHER_CONTAINS:
+          matches = query.contains(homeName) || homeName.contains(query);
+          break;
+        }
+
+        // skip if doesn't match
+        if (!matches)
+          continue;
+
+        player.sendMessage(ChatColor.DARK_AQUA + String.valueOf(i + 1) + " | " +
+                           homeName + " | " + homes.getString("world"));
+      }
+    } catch (SQLException e) {
+      skillIssue(e);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Returns true if `name` is "close enough" to `query`
+   *
+   * "Close enough" depends on what we decide over time,
+   * so yeah, this is in is own method so we can easily
+   * change the formula
+   */
+  private boolean levenshteinScore(String query, String name) {
+    if (query.length() == 0) {
+      return true;
+    }
+
+    double distance = ld.apply(query, name);
+    double ratio = distance / query.length();
+
+    return ratio <= (1.0 - HOME_SEARCH_STRICTNESS);
+  }
+
   boolean cmdListHomes(Player player, String[] args) {
     String uuid = player.getUniqueId().toString();
 
@@ -250,6 +314,20 @@ public class zPHomes extends JavaPlugin {
 
       if (args.length > 0) {
         boolean fail = false;
+
+        String firstArg = args[0].toLowerCase();
+        if (firstArg.contains("search")) {
+          String[] queryW = Arrays.copyOfRange(args, 1, args.length);
+          String query = String.join(" ", queryW);
+
+          SearchMode mode = firstArg.equals("searchl")
+                                ? SearchMode.LEVENSHTEIN
+                                : SearchMode.EITHER_CONTAINS;
+
+          return searchHomes(player, query, mode);
+        }
+
+        // not searching, so it must be a page number
         try {
           page = Integer.valueOf(args[0]) - 1;
         } catch (NumberFormatException e) {
@@ -273,8 +351,8 @@ public class zPHomes extends JavaPlugin {
                 ChatColor.DARK_AQUA + String.valueOf(i + 1) +
                 " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
       }
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (SQLException e) {
+      skillIssue(e);
       return false;
     }
 
@@ -311,8 +389,8 @@ public class zPHomes extends JavaPlugin {
 
       player.teleport(loc);
       player.sendMessage("Teleported to: " + home);
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (SQLException e) {
+      skillIssue(e);
     }
     return true;
   }
@@ -334,104 +412,16 @@ public class zPHomes extends JavaPlugin {
         player.sendMessage("Usage: /delhome homename");
       }
 
-    } catch (SQLException ex) {
-      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (SQLException e) {
+      skillIssue(e);
     }
     return true;
   }
 
-  private class PreparedStatements {
-    private PreparedStatement _homesWithName;
-    private PreparedStatement _homesSegment;
-    private PreparedStatement _deleteHome;
-    private PreparedStatement _setHome;
-
-    private PreparedStatements(Connection conn) {
-      try {
-        _homesWithName = conn.prepareStatement(
-            "SELECT * FROM homes WHERE UUID = ? AND NAME = ?");
-
-        _homesSegment = conn.prepareStatement(
-            "SELECT * FROM homes WHERE UUID = ? ORDER BY id DESC LIMIT ?,?");
-
-        _deleteHome = conn.prepareStatement(
-            "DELETE FROM homes WHERE UUID = ? AND NAME = ?");
-
-        _setHome = conn.prepareStatement(
-            "INSERT INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-      } catch (SQLException e) {
-        getLogger().log(Level.SEVERE, "Failed to init prepared", e);
-      }
-    }
-
-    void setHome(String uuid, String home, HomeLocation hloc) {
-      deleteHome(uuid, home);
-
-      getLogger().info("Inserting user home " + uuid + " with Name:" + home);
-
-      try {
-        _setHome.setString(1, uuid);
-        _setHome.setString(2, home);
-        _setHome.setString(3, hloc.worldname);
-        _setHome.setDouble(4, hloc.x);
-        _setHome.setDouble(5, hloc.y);
-        _setHome.setDouble(6, hloc.z);
-        _setHome.setFloat(7, hloc.yaw);
-        _setHome.setFloat(8, hloc.pitch);
-        _setHome.setString(9, hloc.servername);
-
-        // phew, it's over
-        _setHome.execute();
-      } catch (SQLException ex) {
-        Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
-
-    ResultSet homesWithName(String uuid, String home) throws SQLException {
-      _homesWithName.setString(1, uuid);
-      _homesWithName.setString(2, home);
-      return _homesWithName.executeQuery();
-    }
-
-    ResultSet homesSegment(String uuid, int segment) throws SQLException {
-      _homesSegment.setString(1, uuid);
-
-      int start = segment * PAGE_LENGTH;
-      _homesSegment.setInt(2, start);
-      _homesSegment.setInt(3, start + PAGE_LENGTH);
-
-      return _homesSegment.executeQuery();
-    }
-
-    boolean homeExists(String uuid, String home) throws SQLException {
-      return homesWithName(uuid, home).next();
-    }
-
-    void deleteHome(String uuid, String home) {
-      try {
-        _deleteHome.setString(1, uuid);
-        _deleteHome.setString(2, home);
-        _deleteHome.execute();
-      } catch (SQLException e) {
-        Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
-      }
-    }
-  }
-
-  private class HomeLocation {
-    double x, y, z;
-    float yaw, pitch;
-    public String worldname, servername;
-
-    public HomeLocation(Location loc, String worldname, String servername) {
-      this.x = loc.getX();
-      this.y = loc.getY();
-      this.z = loc.getZ();
-      this.yaw = loc.getYaw();
-      this.pitch = loc.getPitch();
-      this.worldname = worldname;
-      this.servername = servername; // is this even necessary?
-    }
+  /**
+   * Generic severe error logger
+   */
+  static void skillIssue(Exception e) {
+    Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
   }
 }
