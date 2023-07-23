@@ -2,6 +2,7 @@ package coffee.solarsystem.backathome;
 
 import java.io.File;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ public class zPHomes extends JavaPlugin {
   static Connection conn;
   static Statement query;
   PreparedStatements prepared;
+  LevenshteinDistance ld;
   PluginDescriptionFile pdf = this.getDescription();
   ResultSet Lookup;
   FileConfiguration config = this.getConfig();
@@ -90,6 +92,7 @@ public class zPHomes extends JavaPlugin {
   }
 
   @Override public void onEnable() { // Put that in config file
+    ld = new LevenshteinDistance();
     Server server = getServer();
     ConsoleCommandSender cs = server.getConsoleSender();
     cs.sendMessage("Establishing Database connection");
@@ -243,6 +246,60 @@ public class zPHomes extends JavaPlugin {
     prepared.setHome(uuid, homename, hloc);
   }
 
+  boolean searchHomes(Player player, String query) {
+    String uuid = player.getUniqueId().toString();
+    ResultSet homes;
+
+    try {
+      homes = prepared.getAllHomes(uuid);
+
+      player.sendMessage(ChatColor.BOLD + "Searching for homes... `" + query +
+                         "`");
+
+      for (int i = 0; homes.next(); i++) {
+        String homeName = homes.getString("Name");
+
+        // TODO refactor this, filter the array BEFORE reaching this loop
+        // instead of doing a check at loop-time...
+        //
+        // yes this is pretty crappy code but I want to get this commit
+        // out of the way so I can fix the mysql stuff already
+
+        // skip non-matching
+        if (!levenshteinScore(query, homeName))
+          continue;
+
+        player.sendMessage(ChatColor.DARK_AQUA + String.valueOf(i + 1) + " | " +
+                           homes.getString("Name") + " | " +
+                           homes.getString("world"));
+      }
+    } catch (SQLException e) {
+      // TODO error-logging method instead of copy pasting this everywhere
+      Logger.getLogger(zPHomes.class.getName()).log(Level.SEVERE, null, e);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Returns true if `name` is "close enough" to `query`
+   *
+   * "Close enough" depends on what we decide over time,
+   * so yeah, this is in is own method so we can easily
+   * change the formula
+   */
+  private boolean levenshteinScore(String query, String name) {
+    if (query.length() == 0) {
+      return true;
+    }
+
+    double distance = ld.apply(query, name);
+    double ratio = distance / query.length();
+
+    return ratio <= 0.5;
+  }
+
   boolean cmdListHomes(Player player, String[] args) {
     String uuid = player.getUniqueId().toString();
 
@@ -251,6 +308,14 @@ public class zPHomes extends JavaPlugin {
 
       if (args.length > 0) {
         boolean fail = false;
+
+        if (args[0].toLowerCase() == "search") {
+          String[] queryW = Arrays.copyOfRange(args, 1, args.length);
+          String query = String.join(" ", queryW);
+          return searchHomes(player, query);
+        }
+
+        // not searching, so it must be a page number
         try {
           page = Integer.valueOf(args[0]) - 1;
         } catch (NumberFormatException e) {

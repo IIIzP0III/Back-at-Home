@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PreparedStatements {
+  private PreparedStatement _getAllHomes;
   private PreparedStatement _homesWithName;
   private PreparedStatement _homesSegment;
   private PreparedStatement _deleteHome;
@@ -15,6 +16,9 @@ public class PreparedStatements {
     this.logger = logger;
 
     try {
+      _getAllHomes =
+          conn.prepareStatement("SELECT * FROM homes WHERE UUID = ?");
+
       _homesWithName = conn.prepareStatement(
           "SELECT * FROM homes WHERE UUID = ? AND NAME = ?");
 
@@ -59,6 +63,11 @@ public class PreparedStatements {
     _homesWithName.setString(1, uuid);
     _homesWithName.setString(2, home);
     return _homesWithName.executeQuery();
+  }
+
+  ResultSet getAllHomes(String uuid) throws SQLException {
+    _getAllHomes.setString(1, uuid);
+    return _getAllHomes.executeQuery();
   }
 
   ResultSet homesSegment(String uuid, int segment) throws SQLException {
