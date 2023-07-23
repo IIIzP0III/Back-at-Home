@@ -309,7 +309,7 @@ public class zPHomes extends JavaPlugin {
       if (args.length > 0) {
         boolean fail = false;
 
-        if (args[0].toLowerCase() == "search") {
+        if (args[0].toLowerCase().equals("search")) {
           String[] queryW = Arrays.copyOfRange(args, 1, args.length);
           String query = String.join(" ", queryW);
           return searchHomes(player, query);
