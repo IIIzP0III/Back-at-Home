@@ -1,11 +1,14 @@
 package coffee.solarsystem.backathome;
 
+import java.awt.*;
 import java.io.File;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import net.md_5.bungee.api.chat.ClickEvent;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +21,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /** @author zP0 zP@solarsystem.coffee */
 public class zPHomes extends JavaPlugin {
@@ -351,6 +355,10 @@ public class zPHomes extends JavaPlugin {
                 ChatColor.DARK_AQUA + String.valueOf(i + 1) +
                 " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
       }
+      player.sendMessage(ChatColor.BOLD + "Page " + page + " | " + (page + 2) + ")");
+      TextComponent com = new TextComponent("baa");
+      ClickEvent click = new ClickEvent();
+      com.setClickEvent(ClickEvent.Action.RUN_COMMAND);
     } catch (SQLException e) {
       skillIssue(e);
       return false;
