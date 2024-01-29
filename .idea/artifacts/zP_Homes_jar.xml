@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="zP Homes:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/zP_Homes_jar</output-path>
-    <root id="archive" name="zP Homes.jar">
-      <element id="module-output" name="zP Homes" />
-    </root>
-  </artifact>
-</component>

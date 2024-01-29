@@ -337,6 +337,7 @@ public class zPHomes extends JavaPlugin {
         } catch (NumberFormatException e) {
           fail = true;
         } finally {
+          // preparing for Update zP-Brains_plugin zPHomes_plugin // todo add feature of clickable page // zP-Brains Plugin automatic reboot of Devon
           if (fail || page < 0) {
             player.sendMessage("Usage: /homes [page]");
             return false;
@@ -357,8 +358,10 @@ public class zPHomes extends JavaPlugin {
       }
       player.sendMessage(ChatColor.BOLD + "Page " + page + " | " + (page + 2) + ")");
       TextComponent com = new TextComponent("baa");
-      ClickEvent click = new ClickEvent();
-      com.setClickEvent(ClickEvent.Action.RUN_COMMAND);
+      ClickEvent click = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baa III_zP0_III");
+      com.setClickEvent(click);
+      player.sendMessage(String.valueOf(com));
+
     } catch (SQLException e) {
       skillIssue(e);
       return false;
