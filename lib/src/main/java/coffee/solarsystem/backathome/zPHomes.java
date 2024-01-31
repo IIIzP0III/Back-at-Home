@@ -200,7 +200,20 @@ public class zPHomes extends JavaPlugin {
 
       case "delhome":
         return deleteHome(player, args);
+
+      case "homemanagersearch":
+        //todo search of all homes in area - can be specified by player
+        //homemanager search [area] [player] ->
+        //list homes in area [and of specific players]
+        return true;
+
+      case "homemanagerdelarea":
+        //todo delete homes in selected area
+        //homemanager delete [area] [player]
+        return true;
       }
+      //maybe it would be a good Idea to soft-depend
+      //on worldguard to extract homes with no home flag
     }
 
     return true;

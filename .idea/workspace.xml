@@ -5,17 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="Clickable pages part 1">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/artifacts/BackAtHome_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/intellij-javadocs-4.0.1.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/zP_Homes_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/lib/BackAtHome.lib.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/lib/BackAtHome.lib.main.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/resources/plugin.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +117,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;dev-clickpages&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/zp0/P/Back-at-Home/lib/build/libs/lib.jar&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/zp0/P/Back-at-Home&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.16642338&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.17379183&quot;,
@@ -132,7 +125,7 @@
     &quot;two.files.diff.last.used.folder&quot;: &quot;/home/zp0/P/Back-at-Home/lib/build/libs/lib.jar&quot;
   }
 }</component>
-  <component name="RunManager" selected="Gradle.Back-at-Home [jar]">
+  <component name="RunManager" selected="Gradle.Back-at-Home [build]">
     <configuration name="Back-at-Home [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -221,9 +214,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.Back-at-Home [build]" />
         <item itemvalue="Gradle.Back-at-Home [jar]" />
         <item itemvalue="Gradle.Back-at-Home [compileJava]" />
-        <item itemvalue="Gradle.Back-at-Home [build]" />
         <item itemvalue="Gradle.Back-at-Home" />
       </list>
     </recent_temporary>
@@ -261,7 +254,15 @@
       <option name="project" value="LOCAL" />
       <updated>1705003404055</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Clickable pages part 1">
+      <option name="closed" value="true" />
+      <created>1706517742930</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1706517742930</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
