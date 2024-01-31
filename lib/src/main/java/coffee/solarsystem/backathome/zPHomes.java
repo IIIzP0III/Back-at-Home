@@ -346,7 +346,7 @@ public class zPHomes extends JavaPlugin {
 
         // not searching, so it must be a page number
         try {
-          page = Integer.valueOf(args[0]) - 1;
+          page = Integer.parseInt(args[0]) - 1;
         } catch (NumberFormatException e) {
           fail = true;
         } finally {

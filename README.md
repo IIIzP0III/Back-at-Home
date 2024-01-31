@@ -23,4 +23,6 @@ Players can set infinite amounts of homes
 
 <h3>Under development</h3>
 
--> moderation features for staff as well as worldguard support
+- moderation features for staff as well as worldguard support
+- Permission based home limit
+- Bulkupdater for renamed worlds
