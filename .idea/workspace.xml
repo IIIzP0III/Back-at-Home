@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="updated README.md">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/BackAtHome_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/BackAtHome_jar.xml" afterDir="false" />
+    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="click event">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/lib/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +130,7 @@
     "two.files.diff.last.used.folder": "/home/zp0/P/Back-at-Home/lib/build/libs/lib.jar"
   }
 }]]></component>
-  <component name="RunManager" selected="Gradle.Back-at-Home [build]">
+  <component name="RunManager" selected="Gradle.Back-at-Home [assemble]">
     <configuration name="Back-at-Home [assemble]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -245,10 +243,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.Back-at-Home [build]" />
-        <item itemvalue="Gradle.Back-at-Home [buildNeeded]" />
         <item itemvalue="Gradle.Back-at-Home [assemble]" />
         <item itemvalue="Gradle.Back-at-Home [buildDependents]" />
+        <item itemvalue="Gradle.Back-at-Home [build]" />
+        <item itemvalue="Gradle.Back-at-Home [buildNeeded]" />
         <item itemvalue="Gradle.Back-at-Home [jar]" />
       </list>
     </recent_temporary>
@@ -318,7 +316,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706687816156</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="click event">
+      <option name="closed" value="true" />
+      <created>1707728304873</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1707728304873</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -349,6 +355,7 @@
     <MESSAGE value="Clickable pages part 1" />
     <MESSAGE value="future cmds" />
     <MESSAGE value="updated README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated README.md" />
+    <MESSAGE value="click event" />
+    <option name="LAST_COMMIT_MESSAGE" value="click event" />
   </component>
 </project>
