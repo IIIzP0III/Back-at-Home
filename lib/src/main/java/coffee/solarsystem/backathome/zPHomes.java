@@ -371,14 +371,14 @@ public class zPHomes extends JavaPlugin {
       }
       player.sendMessage(ChatColor.BOLD + "Page " + page + " | " + (page + 2) + ")");
       TextComponent page_previous = new TextComponent("previous");
-      String page_previous_cmd = "/homes" + String.valueOf(page - 1);
+      TextComponent page_next = new TextComponent("next");
+      String page_previous_cmd = "/homes " + String.valueOf(page);
       ClickEvent click_page_previous = new ClickEvent(ClickEvent.Action.RUN_COMMAND, page_previous_cmd);
-
-      TextComponent com = new TextComponent("baa");
-      ClickEvent click = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baa III_zP0_III");
-      com.setClickEvent(click);
-      player.sendMessage(String.valueOf(com));
-      player.sendMessage(String.valueOf(click_page_previous));
+      String page_next_cmd = "/homes " + String.valueOf(page+2);
+      ClickEvent click_page_next = new ClickEvent(ClickEvent.Action.RUN_COMMAND, page_next_cmd);
+      page_previous.setClickEvent(click_page_previous);
+      page_next.setClickEvent(click_page_next);
+      player.spigot().sendMessage(page_previous, page_next);
 
     } catch (SQLException e) {
       skillIssue(e);

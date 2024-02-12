@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="click event">
+    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="dependency stuff">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/lib/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +131,12 @@
     "two.files.diff.last.used.folder": "/home/zp0/P/Back-at-Home/lib/build/libs/lib.jar"
   }
 }]]></component>
-  <component name="RunManager" selected="Gradle.Back-at-Home [assemble]">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib/libs" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.Back-at-Home [build]">
     <configuration name="Back-at-Home [assemble]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -243,9 +249,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.Back-at-Home [build]" />
         <item itemvalue="Gradle.Back-at-Home [assemble]" />
         <item itemvalue="Gradle.Back-at-Home [buildDependents]" />
-        <item itemvalue="Gradle.Back-at-Home [build]" />
         <item itemvalue="Gradle.Back-at-Home [buildNeeded]" />
         <item itemvalue="Gradle.Back-at-Home [jar]" />
       </list>
@@ -324,7 +330,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707728304873</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="dependency stuff">
+      <option name="closed" value="true" />
+      <created>1707729364852</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1707729364852</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -356,6 +370,7 @@
     <MESSAGE value="future cmds" />
     <MESSAGE value="updated README.md" />
     <MESSAGE value="click event" />
-    <option name="LAST_COMMIT_MESSAGE" value="click event" />
+    <MESSAGE value="dependency stuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="dependency stuff" />
   </component>
 </project>
