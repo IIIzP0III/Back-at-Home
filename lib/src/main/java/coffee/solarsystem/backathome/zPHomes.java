@@ -5,6 +5,7 @@ import java.io.File;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -203,9 +204,12 @@ public class zPHomes extends JavaPlugin {
 
       case "homemanager":
         if  (args.length > 0) {
-          if (args[1].equalsIgnoreCase("area")) {
-            if (args.length > 3) {
-              int pos = Integer.parseInt(args[2]);
+          if (args[0].equalsIgnoreCase("area")) {
+            if (args.length > 1) {
+              int pos = Integer.parseInt(args[1]);
+              player.sendMessage("looking for homes: ");
+              cmdSearchHomes(player, pos);
+
 
             }
           } else if (args[1].equalsIgnoreCase("delhomes")){
@@ -239,6 +243,13 @@ public class zPHomes extends JavaPlugin {
 
       try {
           ResultSet homes = prepared.getAreaHomes(player.getWorld().getName(), coordz);
+          player.sendMessage("found: ");
+          for(int a = 0; homes.next(); a++){
+            String UIhome = homes.getString("Name");
+            String UIhomeowner = Bukkit.getOfflinePlayer(UUID.fromString(homes.getString("UUID"))).getName();
+            player.sendMessage(UIhome + " | " + UIhomeowner);
+        }
+
       } catch (SQLException e) {
           player.sendMessage("no homes found");
           Bukkit.getConsoleSender().sendMessage("error " + e.toString());
