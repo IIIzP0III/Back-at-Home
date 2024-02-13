@@ -10,6 +10,7 @@ public class PreparedStatements {
   private PreparedStatement _homesSegment;
   private PreparedStatement _deleteHome;
   private PreparedStatement _setHome;
+  private PreparedStatement _getAreaHomes;
   private Logger logger;
 
   public PreparedStatements(Connection conn, Logger logger) {
@@ -30,6 +31,9 @@ public class PreparedStatements {
 
       _setHome = conn.prepareStatement(
           "INSERT INTO homes (UUID,Name,world,x,y,z,yaw,pitch,server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+      _getAreaHomes = conn.prepareStatement(
+              "SELECT * FROM homes WHERE world = ? AND x > ? AND x < ? AND z > ? AND z < ?");
 
     } catch (SQLException e) {
       logger.log(Level.SEVERE, "Failed to init prepared", e);
@@ -68,6 +72,14 @@ public class PreparedStatements {
   ResultSet getAllHomes(String uuid) throws SQLException {
     _getAllHomes.setString(1, uuid);
     return _getAllHomes.executeQuery();
+  }
+  ResultSet getAreaHomes(String world, int[] coordz) throws SQLException {
+    _getAreaHomes.setString(1, world);
+    _getAreaHomes.setInt(2, coordz[0]);
+    _getAreaHomes.setInt(3, coordz[1]);
+    _getAreaHomes.setInt(4, coordz[2]);
+    _getAreaHomes.setInt(5, coordz[3]);
+    return _getAreaHomes.executeQuery();
   }
 
   ResultSet homesSegment(String uuid, int segment) throws SQLException {

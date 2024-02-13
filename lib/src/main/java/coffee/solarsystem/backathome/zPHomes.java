@@ -206,7 +206,6 @@ public class zPHomes extends JavaPlugin {
           if (args[1].equalsIgnoreCase("area")) {
             if (args.length > 3) {
               int pos = Integer.parseInt(args[2]);
-              cmdSearchHomes(player, pos);
 
             }
           } else if (args[1].equalsIgnoreCase("delhomes")){
@@ -232,12 +231,19 @@ public class zPHomes extends JavaPlugin {
 
   boolean cmdSearchHomes(Player player, int pos) {
     Location ploc = player.getLocation();
-    int xdown = (int) (ploc.getX() - (pos/2));
-    int xup = (int) (ploc.getX() + (pos/2));
-    int zdown = (int) (ploc.getZ() - (pos/2));
-    int zup = (int) (ploc.getZ() + (pos/2));
+    int[] coordz = new int[4];
+    coordz[0] = (int) (ploc.getX() - (pos/2));
+    coordz[1] = (int) (ploc.getX() + (pos/2));
+    coordz[2] = (int) (ploc.getZ() - (pos/2));
+    coordz[3] = (int) (ploc.getZ() + (pos/2));
 
-    //add sql stuff
+      try {
+          ResultSet homes = prepared.getAreaHomes(player.getWorld().getName(), coordz);
+      } catch (SQLException e) {
+          player.sendMessage("no homes found");
+          Bukkit.getConsoleSender().sendMessage("error " + e.toString());
+      }
+      //add sql stuff
     return true;
   }
 
