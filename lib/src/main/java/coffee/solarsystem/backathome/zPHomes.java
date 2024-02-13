@@ -1,6 +1,5 @@
 package coffee.solarsystem.backathome;
 
-import java.awt.*;
 import java.io.File;
 import java.sql.*;
 import java.util.Arrays;
@@ -209,11 +208,9 @@ public class zPHomes extends JavaPlugin {
               int pos = Integer.parseInt(args[1]);
               player.sendMessage("looking for homes: ");
               cmdSearchHomes(player, pos);
-
-
             }
-          } else if (args[1].equalsIgnoreCase("delhomes")){
-            int pos = Integer.parseInt(args[2]);
+          } else if (args[0].equalsIgnoreCase("delhome")){
+            cmdDelHomeOther(player, args);
           }
         }
         //todo search of all homes in area - can be specified by player
@@ -232,7 +229,6 @@ public class zPHomes extends JavaPlugin {
 
     return true;
   }
-
   boolean cmdSearchHomes(Player player, int pos) {
     Location ploc = player.getLocation();
     int[] coordz = new int[4];
@@ -247,6 +243,7 @@ public class zPHomes extends JavaPlugin {
           for(int a = 0; homes.next(); a++){
             String UIhome = homes.getString("Name");
             String UIhomeowner = Bukkit.getOfflinePlayer(UUID.fromString(homes.getString("UUID"))).getName();
+
             player.sendMessage(UIhome + " | " + UIhomeowner);
         }
 
@@ -257,7 +254,17 @@ public class zPHomes extends JavaPlugin {
       //add sql stuff
     return true;
   }
+  void cmdDelHomeOther(Player player, String[] args) {
+    String homeName = args[1];
+    String homeUUID = Bukkit.getOfflinePlayer(args[2]).getUniqueId().toString();
 
+
+    String homePlayer = Bukkit.getOfflinePlayer(UUID.fromString(homeUUID)).getName();
+    player.sendMessage("trying to delete home " + homeName + " from " + homePlayer);
+    prepared.deleteHome(homeUUID,homeName);
+    player.sendMessage("home " + homeName + " deleted from player " + homePlayer);
+
+  }
   boolean cmdNewHome(Player player, String[] args) {
     String home = args.length > 0 ? args[0] : "home";
     String uuid = player.getUniqueId().toString();

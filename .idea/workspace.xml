@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="Search homes prepared query">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="home manager area worky">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" afterDir="false" />
     </list>
@@ -370,7 +369,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707847115490</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="home manager area worky">
+      <option name="closed" value="true" />
+      <created>1707848339421</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1707848339421</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -409,6 +416,7 @@
     <MESSAGE value="clickpages - complete" />
     <MESSAGE value="permissions &amp;&amp; SearchHomes" />
     <MESSAGE value="Search homes prepared query" />
-    <option name="LAST_COMMIT_MESSAGE" value="Search homes prepared query" />
+    <MESSAGE value="home manager area worky" />
+    <option name="LAST_COMMIT_MESSAGE" value="home manager area worky" />
   </component>
 </project>
