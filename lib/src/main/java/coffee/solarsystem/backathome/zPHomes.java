@@ -244,7 +244,14 @@ public class zPHomes extends JavaPlugin {
             String UIhome = homes.getString("Name");
             String UIhomeowner = Bukkit.getOfflinePlayer(UUID.fromString(homes.getString("UUID"))).getName();
 
-            player.sendMessage(UIhome + " | " + UIhomeowner);
+            TextComponent delHome = new TextComponent("[DEL]");
+            String delHomecmd = "/homemanager delhome " + UIhome + " " + UIhomeowner;
+            ClickEvent clickDelHome = new ClickEvent(ClickEvent.Action.RUN_COMMAND, delHomecmd);
+            delHome.setClickEvent(clickDelHome);
+            delHome.setColor(net.md_5.bungee.api.ChatColor.RED);
+
+            TextComponent homeDelUI = new TextComponent(UIhome + " | " + UIhomeowner + " ");
+            player.spigot().sendMessage(homeDelUI, delHome);
         }
 
       } catch (SQLException e) {

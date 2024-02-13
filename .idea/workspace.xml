@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="home manager area worky">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="added homemanager delhome command">
       <change beforePath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -377,7 +376,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707848339421</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="added homemanager delhome command">
+      <option name="closed" value="true" />
+      <created>1707850129817</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1707850129817</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -417,6 +424,7 @@
     <MESSAGE value="permissions &amp;&amp; SearchHomes" />
     <MESSAGE value="Search homes prepared query" />
     <MESSAGE value="home manager area worky" />
-    <option name="LAST_COMMIT_MESSAGE" value="home manager area worky" />
+    <MESSAGE value="added homemanager delhome command" />
+    <option name="LAST_COMMIT_MESSAGE" value="added homemanager delhome command" />
   </component>
 </project>
