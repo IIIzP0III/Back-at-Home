@@ -49,7 +49,7 @@ public class zPHomes extends JavaPlugin {
           "jdbc:mysql://" + Address + "/" + Database, DatabaseUser, Password);
       prepared = new PreparedStatements(conn, getLogger());
 
-      stmt = (Statement)conn.createStatement();
+      stmt = conn.createStatement();
       stmt.execute(
           "CREATE TABLE IF NOT EXISTS homes (ID int PRIMARY KEY NOT NULL AUTO_INCREMENT, UUID varchar(255), Name varchar(255), world varchar(255), x double, y double, z double)");
     } catch (SQLException e) {
@@ -201,7 +201,18 @@ public class zPHomes extends JavaPlugin {
       case "delhome":
         return deleteHome(player, args);
 
-      case "homemanagersearch":
+      case "homemanager":
+        if  (args.length > 0) {
+          if (args[1].equalsIgnoreCase("area")) {
+            if (args.length > 3) {
+              int pos = Integer.parseInt(args[2]);
+              cmdSearchHomes(player, pos);
+
+            }
+          } else if (args[1].equalsIgnoreCase("delhomes")){
+            int pos = Integer.parseInt(args[2]);
+          }
+        }
         //todo search of all homes in area - can be specified by player
         //homemanager search [area] [player] ->
         //list homes in area [and of specific players]
@@ -216,6 +227,17 @@ public class zPHomes extends JavaPlugin {
       //on worldguard to extract homes with no home flag
     }
 
+    return true;
+  }
+
+  boolean cmdSearchHomes(Player player, int pos) {
+    Location ploc = player.getLocation();
+    int xdown = (int) (ploc.getX() - (pos/2));
+    int xup = (int) (ploc.getX() + (pos/2));
+    int zdown = (int) (ploc.getZ() - (pos/2));
+    int zup = (int) (ploc.getZ() + (pos/2));
+
+    //add sql stuff
     return true;
   }
 
@@ -350,7 +372,7 @@ public class zPHomes extends JavaPlugin {
         } catch (NumberFormatException e) {
           fail = true;
         } finally {
-          // preparing for Update zP-Brains_plugin zPHomes_plugin // todo add feature of clickable page // zP-Brains Plugin automatic reboot of Devon
+           // todo zP-Brains Plugin automatic reboot of Devon
           if (fail || page < 0) {
             player.sendMessage("Usage: /homes [page]");
             return false;
@@ -369,28 +391,29 @@ public class zPHomes extends JavaPlugin {
                 ChatColor.DARK_AQUA + String.valueOf(i + 1) +
                 " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
       }
-      player.sendMessage(ChatColor.BOLD + "Page " + page + " | " + (page + 2) + ")");
+     // player.sendMessage(ChatColor.BOLD + "Page ( " + page + " || " + (page + 2) + " )");
+
+      // adding clickable page nav {
       TextComponent page_previous = new TextComponent("previous");
-
       TextComponent page_next = new TextComponent("next");
-      String page_previous_cmd = "/homes " + String.valueOf(page);
 
-      ClickEvent click_page_previous = new ClickEvent(ClickEvent.Action.RUN_COMMAND, page_previous_cmd);
+
+      String page_previous_cmd = "/homes " + String.valueOf(page);
       String page_next_cmd = "/homes " + String.valueOf(page+2);
 
+      ClickEvent click_page_previous = new ClickEvent(ClickEvent.Action.RUN_COMMAND, page_previous_cmd);
       ClickEvent click_page_next = new ClickEvent(ClickEvent.Action.RUN_COMMAND, page_next_cmd);
+
       page_previous.setClickEvent(click_page_previous);
+      page_next.setClickEvent(click_page_next);
 
       page_previous.setColor(ChatColor.YELLOW.asBungee());
       page_next.setColor(net.md_5.bungee.api.ChatColor.GOLD);
 
-
-
-
       TextComponent spacer = new TextComponent(" || ");
+        player.spigot().sendMessage(page_previous, spacer, page_next);
 
-      page_next.setClickEvent(click_page_next);
-      player.spigot().sendMessage(page_previous, spacer, page_next);
+      // } adding clickable page nav
 
     } catch (SQLException e) {
       skillIssue(e);
@@ -399,7 +422,6 @@ public class zPHomes extends JavaPlugin {
 
     return true;
   }
-
   boolean gotoHome(Player player, String[] args) {
     String uuid = player.getUniqueId().toString();
     String home = args.length > 0 ? args[0] : "home";
