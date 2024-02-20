@@ -3,7 +3,7 @@
 
 author: zP0
 name: zPHomes
-version: 0.7.0
+version: 0.12.0
 load: POSTWORLD
 main: coffee.solarsystem.backathome.zPHomes
 database: true
@@ -11,13 +11,22 @@ database: true
 commands:
   newhome:
     description: /newhome homename | Create a new home, but don't overwrite if one already exists.
+    permission: zPHomez.user
   sethome:
     description: /sethome homename | Set a new home
+    permission: zPHomez.user
   homes:
     description: /homes pagenumber | List your homes
+    permission: zPHomez.user
   home:
     description: /home homename | Teleports you to your home
+    permission: zPHomez.user
   delhome:
     description: /delhome homename | Deletes a home
+    permission: zPHomez.user
   homeshelp:
     description: /homeshelp | shows help
+    permission: zPHomez.user
+  homemanager:
+    description: /homemanager used for home moderation
+    permission: zPHomez.manager

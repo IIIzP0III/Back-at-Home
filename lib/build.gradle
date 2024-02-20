@@ -18,13 +18,16 @@ repositories {
     maven {
         url "https://hub.spigotmc.org/nexus/content/repositories/public/"
     }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
     shadow 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
     shadow 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
-    implementation 'org.apache.commons:commons-text:1.9'
-
+    implementation 'org.apache.commons:commons-text:1.11.0'
+    implementation name: 'spigot-api-1.20.4-R0.1'
     // Use JUnit test framework.
     // testImplementation 'junit:junit:4.13.2'
 
@@ -37,4 +40,14 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+jar {
+
+    from {
+
+        configurations.compileClasspath.filter {
+            it.name.contains("commons-text")
+        }.collect { it.isDirectory() ? it : zipTree(it)}
+    }
+
 }
