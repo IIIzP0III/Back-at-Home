@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="functional homemanager with Del">
+    <list default="true" id="1069386c-21ec-45cc-abb0-a0f429cd3b50" name="Changes" comment="clickable homes in /homes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/coffee/solarsystem/backathome/zPHomes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -371,7 +369,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707850590328</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="clickable homes in /homes">
+      <option name="closed" value="true" />
+      <created>1708387619939</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1708387619939</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -413,6 +419,7 @@
     <MESSAGE value="home manager area worky" />
     <MESSAGE value="added homemanager delhome command" />
     <MESSAGE value="functional homemanager with Del" />
-    <option name="LAST_COMMIT_MESSAGE" value="functional homemanager with Del" />
+    <MESSAGE value="clickable homes in /homes" />
+    <option name="LAST_COMMIT_MESSAGE" value="clickable homes in /homes" />
   </component>
 </project>

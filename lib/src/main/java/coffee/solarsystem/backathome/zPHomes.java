@@ -214,6 +214,9 @@ public class zPHomes extends JavaPlugin {
           } else if (args[0].equalsIgnoreCase("help")) {
             player.sendMessage("/homemanager area 9 -> shows homes in a radius of 9");
             player.sendMessage("/homemanager delhome homename username -> deletes home");
+            player.sendMessage("/homemanager tp username homename -> teleports to user home");
+          } else if (args[0].equalsIgnoreCase("tp")) {
+            cmdJumpHomeOther(player, args);
           }
         }
         //todo search of all homes in area - can be specified by player
@@ -232,6 +235,47 @@ public class zPHomes extends JavaPlugin {
 
     return true;
   }
+  boolean cmdJumpHomeOther(Player player, String[] args) {
+
+    if(args.length<1) {
+      return true;
+    } else {
+      UUID uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+      String home = args[2];
+
+    try {
+      ResultSet rs = prepared.homesWithName(uuid.toString(), home);
+      if (!rs.next()) {
+        player.sendMessage("Home not found");
+        return false;
+      }
+
+      player.sendMessage("| Going to: " + home + " | ");
+
+      Location loc = player.getLocation();
+      loc.setWorld(Bukkit.getWorld(rs.getString("world")));
+      loc.setX(rs.getDouble("x"));
+      loc.setY(rs.getDouble("y"));
+      loc.setZ(rs.getDouble("z"));
+      float yaw = rs.getFloat("yaw");
+      float pitch = rs.getFloat("pitch");
+
+      if (yaw != -1.0) {
+        loc.setYaw(yaw);
+      }
+      if (pitch != -1.0) {
+        loc.setPitch(pitch);
+      }
+
+      player.teleport(loc);
+      player.sendMessage("Teleported to: " + home);
+    } catch (SQLException e) {
+      skillIssue(e);
+    }
+    return true;
+    }
+  }
+
   boolean cmdSearchHomes(Player player, int pos) {
     Location ploc = player.getLocation();
     int[] coordz = new int[4];
@@ -254,7 +298,13 @@ public class zPHomes extends JavaPlugin {
             delHome.setColor(net.md_5.bungee.api.ChatColor.RED);
 
             TextComponent homeDelUI = new TextComponent(UIhome + " | " + UIhomeowner + " ");
-            player.spigot().sendMessage(homeDelUI, delHome);
+
+            TextComponent tpHome = new TextComponent("[teleport]");
+            String tpHomecmd = "/homemanger tp " + UIhomeowner + " " + UIhome;
+            ClickEvent clicktpHome = new ClickEvent(ClickEvent.Action.RUN_COMMAND, tpHomecmd);
+            tpHome.setClickEvent(clicktpHome);
+            tpHome.setColor(ChatColor.LIGHT_PURPLE.asBungee());
+            player.spigot().sendMessage(delHome, tpHome,  homeDelUI);
         }
 
       } catch (SQLException e) {
@@ -500,6 +550,7 @@ public class zPHomes extends JavaPlugin {
     }
     return true;
   }
+
 
   boolean deleteHome(Player player, String[] args) {
     String uuid = player.getUniqueId().toString();
