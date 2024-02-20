@@ -211,6 +211,9 @@ public class zPHomes extends JavaPlugin {
             }
           } else if (args[0].equalsIgnoreCase("delhome")){
             cmdDelHomeOther(player, args);
+          } else if (args[0].equalsIgnoreCase("help")) {
+            player.sendMessage("/homemanager area 9 -> shows homes in a radius of 9");
+            player.sendMessage("/homemanager delhome homename username -> deletes home");
           }
         }
         //todo search of all homes in area - can be specified by player
@@ -417,10 +420,19 @@ public class zPHomes extends JavaPlugin {
 
       int start = page * PAGE_LENGTH;
       for (int i = start; rs.next() && i < start + PAGE_LENGTH; i++) {
-        player
-            .sendMessage(
-                ChatColor.DARK_AQUA + String.valueOf(i + 1) +
-                " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
+
+
+        TextComponent home_object = new TextComponent(" | " + rs.getString("Name") + " | " + rs.getString("world"));
+        String home_object_cmd = "/home " + rs.getString("Name");
+        ClickEvent click_home_object = new ClickEvent(ClickEvent.Action.RUN_COMMAND, home_object_cmd);
+
+
+        home_object.setClickEvent(click_home_object);
+        home_object.setColor(ChatColor.DARK_AQUA.asBungee());
+        player.spigot().sendMessage(home_object);
+//        player.sendMessage(
+//                ChatColor.DARK_AQUA + String.valueOf(i + 1) +
+//                " | " + rs.getString("Name") + " | " + rs.getString("world") /* + ", " + rs.getString("x") + ", " + rs.getString("y") + ", " + rs.getString("z")*/);
       }
      // player.sendMessage(ChatColor.BOLD + "Page ( " + page + " || " + (page + 2) + " )");
 

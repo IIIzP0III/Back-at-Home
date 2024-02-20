@@ -3,7 +3,7 @@
 
 author: zP0
 name: zPHomes
-version: 0.10.0
+version: 0.12.0
 load: POSTWORLD
 main: coffee.solarsystem.backathome.zPHomes
 database: true

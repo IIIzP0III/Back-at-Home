@@ -21,8 +21,25 @@ Players can set infinite amounts of homes
 - /home homename
 - /homes -> (Prints a list of all homes of the player)
 
+
+<h3>Completed development</h3>
+
+- home moderation
+
+
+- /homemanager area 90 -> shows all homes of players in 90 blocks
+- /homemanager delhome homename username -> deletes home of player
+
+
+- home permissions
+
+- permission node for users zPHomez.user
+- permission node for homemanager zPHomez.manager (dont give to players)
+
 <h3>Under development</h3>
 
-- moderation features for staff as well as worldguard support
+- worldguard support
 - Permission based home limit
 - Bulkupdater for renamed worlds
+- export feature into json
+- clickable /homes menu
