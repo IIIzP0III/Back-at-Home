@@ -209,17 +209,20 @@ public class zPHomes extends JavaPlugin {
               player.sendMessage("looking for homes: ");
               cmdSearchHomes(player, pos);
             }
+
           } else if (args[0].equalsIgnoreCase("delhome")){
             cmdDelHomeOther(player, args);
+
           } else if (args[0].equalsIgnoreCase("help")) {
             player.sendMessage("/homemanager area 9 -> shows homes in a radius of 9");
             player.sendMessage("/homemanager delhome homename username -> deletes home");
             player.sendMessage("/homemanager tp username homename -> teleports to user home");
+
           } else if (args[0].equalsIgnoreCase("tp")) {
             cmdJumpHomeOther(player, args);
           }
         }
-        //todo search of all homes in area - can be specified by player
+        //search of all homes in area -> maybe = can be specified by player
         //homemanager search [area] [player] ->
         //list homes in area [and of specific players]
         return true;
@@ -286,7 +289,6 @@ public class zPHomes extends JavaPlugin {
 
       try {
           ResultSet homes = prepared.getAreaHomes(player.getWorld().getName(), coordz);
-          player.sendMessage("found: ");
           for(int a = 0; homes.next(); a++){
             String UIhome = homes.getString("Name");
             String UIhomeowner = Bukkit.getOfflinePlayer(UUID.fromString(homes.getString("UUID"))).getName();
@@ -300,7 +302,7 @@ public class zPHomes extends JavaPlugin {
             TextComponent homeDelUI = new TextComponent(UIhome + " | " + UIhomeowner + " ");
 
             TextComponent tpHome = new TextComponent("[teleport]");
-            String tpHomecmd = "/homemanger tp " + UIhomeowner + " " + UIhome;
+            String tpHomecmd = "/homemanager tp " + UIhomeowner + " " + UIhome;
             ClickEvent clicktpHome = new ClickEvent(ClickEvent.Action.RUN_COMMAND, tpHomecmd);
             tpHome.setClickEvent(clicktpHome);
             tpHome.setColor(ChatColor.LIGHT_PURPLE.asBungee());
@@ -321,9 +323,11 @@ public class zPHomes extends JavaPlugin {
 
     String homePlayer = Bukkit.getOfflinePlayer(UUID.fromString(homeUUID)).getName();
     player.sendMessage("trying to delete home " + homeName + " from " + homePlayer);
-    prepared.deleteHome(homeUUID,homeName);
-    player.sendMessage("home " + homeName + " deleted from player " + homePlayer);
-
+    if (prepared.deleteHome(homeUUID,homeName)) {
+      player.sendMessage("home " + homeName + " deleted from player " + homePlayer);
+    } else {
+      player.sendMessage("error deleting home");
+    }
   }
   boolean cmdNewHome(Player player, String[] args) {
     String home = args.length > 0 ? args[0] : "home";
@@ -419,7 +423,7 @@ public class zPHomes extends JavaPlugin {
    * change the formula
    */
   private boolean levenshteinScore(String query, String name) {
-    if (query.length() == 0) {
+    if (query.isEmpty()) {
       return true;
     }
 

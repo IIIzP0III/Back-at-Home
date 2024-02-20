@@ -96,13 +96,15 @@ public class PreparedStatements {
     return homesWithName(uuid, home).next();
   }
 
-  void deleteHome(String uuid, String home) {
+  boolean deleteHome(String uuid, String home) {
     try {
       _deleteHome.setString(1, uuid);
       _deleteHome.setString(2, home);
       _deleteHome.execute();
+      return true;
     } catch (SQLException e) {
       zPHomes.skillIssue(e);
     }
+    return false;
   }
 }
