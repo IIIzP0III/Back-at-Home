@@ -87,7 +87,7 @@ public class zPHomes extends JavaPlugin {
         config.getString("LastLoadedVersion"), plVerStr);
     int[] lastVersion = parseSemVer(lastVerStr);
 
-    if (version.equals(lastVersion)) {
+    if (Arrays.equals(version, lastVersion)) {
       return;
     }
 
@@ -135,7 +135,7 @@ public class zPHomes extends JavaPlugin {
           "Disabling zPHomes Plugin, setup your MySQL/MariaDB Database connection in ./plugins/zPHomes/config.yml");
 
       this.getPluginLoader().disablePlugin(
-          Bukkit.getPluginManager().getPlugin("coffee.solarsystem.backathome"));
+              Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("coffee.solarsystem.backathome")));
     } else {
       DatabaseUser = config.getString("DatabaseUser");
       Password = config.getString("Password");
@@ -282,10 +282,10 @@ public class zPHomes extends JavaPlugin {
   boolean cmdSearchHomes(Player player, int pos) {
     Location ploc = player.getLocation();
     int[] coordz = new int[4];
-    coordz[0] = (int) (ploc.getX() - (pos/2));
-    coordz[1] = (int) (ploc.getX() + (pos/2));
-    coordz[2] = (int) (ploc.getZ() - (pos/2));
-    coordz[3] = (int) (ploc.getZ() + (pos/2));
+    coordz[0] = (int) (ploc.getX() - (pos));
+    coordz[1] = (int) (ploc.getX() + (pos));
+    coordz[2] = (int) (ploc.getZ() - (pos));
+    coordz[3] = (int) (ploc.getZ() + (pos));
 
       try {
           ResultSet homes = prepared.getAreaHomes(player.getWorld().getName(), coordz);
@@ -490,7 +490,6 @@ public class zPHomes extends JavaPlugin {
       }
      // player.sendMessage(ChatColor.BOLD + "Page ( " + page + " || " + (page + 2) + " )");
 
-      // adding clickable page nav {
       TextComponent page_previous = new TextComponent("previous");
       TextComponent page_next = new TextComponent("next");
 
@@ -509,8 +508,6 @@ public class zPHomes extends JavaPlugin {
 
       TextComponent spacer = new TextComponent(" || ");
         player.spigot().sendMessage(page_previous, spacer, page_next);
-
-      // } adding clickable page nav
 
     } catch (SQLException e) {
       skillIssue(e);
