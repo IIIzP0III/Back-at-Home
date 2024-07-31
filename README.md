@@ -9,7 +9,7 @@ Players can set infinite amounts of homes
 - homes are safely stored inside a mysql or mariadb
 - featuring fast performance even when huge amounts of homes are set
 
-<h1>Installation <h1>
+<h1>Installation </h1>
   place zPHomes.jar inside your plugin/ folder
   launch your server
   setup your database configuration(mysql/mariadb) in plugins/zPHomes/config.jar
@@ -17,6 +17,7 @@ Players can set infinite amounts of homes
     -node zPhomes.user
     -node zPhomes.manager
   }
+  
 <h1>Supported commands</h1>
 
 - /sethome
