@@ -1,7 +1,7 @@
 # zP-Homes
 A home plugin using a database to give players the option to set far over 1000 homes
 Back at Home is a minecraft server plugin for spigot/papermc/bukkit
-- current version supports 1.8.9-1.20.4
+- current version supports 1.8.9-1.21
 - tested on 1.20.4
 
 
