@@ -15,7 +15,6 @@ Players can set infinite amounts of homes
   setup your database configuration(mysql/mariadb) in plugins/zPHomes/config.jar
   add permissions to groups or playerz {
     -node zPhomes.user
-    -node zPhomes.manager
   }
   
 <h1>Supported commands</h1>
