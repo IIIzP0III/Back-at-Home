@@ -10,12 +10,12 @@ Players can set infinite amounts of homes
 - featuring fast performance even when huge amounts of homes are set
 
 <h1>Installation </h1>
-  place zPHomes.jar inside your plugin/ folder
-  launch your server
-  setup your database configuration(mysql/mariadb) in plugins/zPHomes/config.jar
-  add permissions to groups or playerz {
-    -node zPhomes.user
-  }
+  - place zPHomes.jar inside your plugin/ folder
+  - launch your server
+  - setup your database configuration(mysql/mariadb) in plugins/zPHomes/config.jar
+  - add permissions to groups or playerz {
+  - node zPhomes.user
+  - }
   
 <h1>Supported commands</h1>
 
